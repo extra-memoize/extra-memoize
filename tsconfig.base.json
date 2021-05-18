@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2019"
+  , "module": "CommonJS"
+  , "esModuleInterop": true
+  , "strict": true
+  , "noUnusedLocals": false
+  , "noUnusedParameters": false
+  , "baseUrl": "."
+  , "paths": {
+      "@src/*": ["src/*"]
+    , "@helpers/*": ["src/helpers/*"]
+    , "@utils/*": ["src/utils/*"]
+    , "@test/*": ["__tests__/*"]
+    }
+  }
+}
