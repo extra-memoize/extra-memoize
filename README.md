@@ -80,3 +80,13 @@ class LRUCache<T> extends StringKeyCache<T> implements ICache<T> {
 ```
 
 The classic LRU cache.
+
+### TLRUCache
+
+```ts
+class TLRUCache<T> extends StringKeyCache<T> implements ICache<T> {
+  constructor(limit: number, maxAge: number)
+}
+```
+
+The classic TLRU cache.

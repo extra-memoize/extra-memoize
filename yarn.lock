@@ -548,6 +548,15 @@
     "@blackglory/errors" "^1.1.2"
     justypes "^0.1.5"
 
+"@blackglory/structures@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@blackglory/structures/-/structures-0.2.5.tgz#22076055c6591fd31a40afa3e1d687c22bc8d98a"
+  integrity sha512-t+G6M9XJlYPIcMZpOVpvkMimyCPcDkqoxiZY4xD7eRXFnkf4wLBtW18j3LbvtWJnFQqFE+0VHRuVK4X1EMrcdQ==
+  dependencies:
+    "@blackglory/errors" "^1.1.2"
+    extra-timers "^0.2.2"
+    justypes "^0.1.5"
+
 "@blackglory/types@^0.4.6", "@blackglory/types@^0.4.7":
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-0.4.7.tgz#c704911ec8f8fa09c5c9b1f51d57c80f6aad1dc2"
@@ -2674,18 +2683,18 @@ extra-promise@^0.17.5:
     reflect-metadata "^0.1.13"
     return-style "^0.12.3"
 
-extra-promise@^0.18.4:
-  version "0.18.4"
-  resolved "https://registry.yarnpkg.com/extra-promise/-/extra-promise-0.18.4.tgz#9401443595f7a0a7687dea3c3e9ee901e7d6dfed"
-  integrity sha512-KkJj5VPxeAHKLcDaWM99luYDkBTVCGOfCOdw17vPi+9CPtXtkFRIBnjBrPXSMwJXLNOcko4HUnJxKCbOAJZ4Sw==
+extra-promise@^0.18.5:
+  version "0.18.5"
+  resolved "https://registry.yarnpkg.com/extra-promise/-/extra-promise-0.18.5.tgz#f3a3f533543c1a0295c082d760e2abf39f08beea"
+  integrity sha512-+KDCGG+C7dGhXGL/+dpuSJwHI4H5+N1Wy7njY1+1Hhpw0fjf1gkv5yX72pGyicotecNIeD4OrKU8WHHLFTRsfg==
   dependencies:
     "@blackglory/errors" "^1.1.2"
     "@blackglory/go" "^0.1.0"
     "@blackglory/structures" "^0.2.3"
     "@blackglory/types" "^0.5.0"
+    abort-controller "^3.0.0"
     core-js "^3.17.3"
     eventemitter3 "^4.0.7"
-    extra-fetch "^1.7.2"
     extra-generator "^0.2.10"
     iterable-operator "^0.14.3"
     justypes "^0.1.5"
@@ -2699,6 +2708,11 @@ extra-stream@^0.1.2:
   integrity sha512-jlD+eZ1IeHSWvP9Z/wwMIrcwi3fuKD6B9DlRoyIsn2HclcJL+HAJGtBNQcFyl3ys8pYcLAcx8E4WgF+QXDAcgw==
   dependencies:
     "@blackglory/types" "^0.4.6"
+
+extra-timers@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/extra-timers/-/extra-timers-0.2.2.tgz#d6a14e2ac1315ba8d61aa1ca9872fde127055323"
+  integrity sha512-n9J9fm8/myqOCg9yatwrL/x32N6HEY94KPUu2utg33DbTvpnwA6IKNvSnsDPaOvhMgzX5p1kZx43etsVgCJlWA==
 
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"

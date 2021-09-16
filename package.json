@@ -68,8 +68,8 @@
   },
   "dependencies": {
     "@blackglory/go": "^0.1.0",
-    "@blackglory/structures": "^0.2.3",
-    "extra-promise": "^0.18.4",
+    "@blackglory/structures": "^0.2.5",
+    "extra-promise": "^0.18.5",
     "fast-json-stable-stringify": "^2.1.0"
   }
 }
