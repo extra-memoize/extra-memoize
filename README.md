@@ -1,6 +1,11 @@
 # extra-memoize
 Yet another memoize library, but just better.
 
+### Philosophy
+Most memoize functions include strategies (such as TTL), which will actually cause poor cache performance, because memoize functions can only use common interfaces to implement related strategies.
+
+`extra-memoize` takes another approach, its memoize function is very light. It delegates the implementation of the strategies to the cache layer and cache wrapper. This allows the cache backend to fully utilize their performance.
+
 ## Install
 
 ```sh
