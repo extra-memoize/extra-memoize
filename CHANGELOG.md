@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/BlackGlory/extra-memoize/compare/v0.1.2...v0.2.0) (2021-09-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* rewrite memoize, IMap
+
+### Features
+
+* rewrite memoize, IMap ([edd445d](https://github.com/BlackGlory/extra-memoize/commit/edd445dfd79e516b05139fab08dbb3cc5d8eddc1))
+
 ### [0.1.2](https://github.com/BlackGlory/extra-memoize/compare/v0.1.1...v0.1.2) (2021-09-16)
 
 
