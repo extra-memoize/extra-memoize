@@ -1,4 +1,5 @@
 export * from './memoize'
+export * from './memoize-async'
 export * from './string-key-cache'
 export * from './lru-cache'
 export * from './expirable-cache'

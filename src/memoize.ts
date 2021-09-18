@@ -1,9 +1,7 @@
-import { isPromiseLike } from 'extra-promise'
-import { go } from '@blackglory/go'
 import { ICache } from './types'
 
 export interface IMemoizeOptions<Result> {
-  cache: ICache<Result | Promise<Result>>
+  cache: ICache<Result>
 
   /**
    * Used to judge whether a function execution is too slow.
@@ -14,34 +12,23 @@ export interface IMemoizeOptions<Result> {
   executionTimeThreshold?: number
 }
 
-export function memoize<
-  Result
-, Args extends any[]
-, Func extends (...args: Args) => Result | PromiseLike<Result>
->(
-  { cache, executionTimeThreshold = 0 }: IMemoizeOptions<Result>
-, fn: Func
-): Func {
-  return function (this: unknown, ...args: any): Result | Promise<Result> {
-    if (cache.has(args)) return cache.get(args) as Result | Promise<Result>
+export function memoize<Result, Args extends any[]>(
+  {
+    cache
+  , executionTimeThreshold = 0
+  }: IMemoizeOptions<Result>
+, fn: (...args: Args) => Result
+): (...args: Args) => Result {
+  return function (this: unknown, ...args: Args): Result {
+    if (cache.has(args)) return cache.get(args)!
 
     const startTime = Date.now()
     const result = fn.apply(this, args)
-
-    if (isPromiseLike(result)) {
-      return go(async () => {
-        const proResult = await result
-        if (isSlowExecution()) {
-          cache.set(args, Promise.resolve(proResult))
-        }
-        return proResult
-      })
-    } else {
-      if (isSlowExecution()) {
-        cache.set(args, result)
-      }
-      return result
+    if (isSlowExecution()) {
+      cache.set(args, result)
     }
+
+    return result
 
     function isSlowExecution(): boolean {
       return getElapsed() >= executionTimeThreshold
@@ -50,5 +37,5 @@ export function memoize<
     function getElapsed(): number {
       return Date.now() - startTime
     }
-  } as Func
+  }
 }

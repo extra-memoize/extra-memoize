@@ -30,6 +30,7 @@ interface IMap<K, V> {
   set(key: K, value: V): void
   has(key: K): boolean
   get(key: K): V | undefined
+  delete(key: K): boolean
   clear(): void
 }
 
@@ -40,7 +41,7 @@ type ICache<T> = IMap<unknown[], T>
 
 ```ts
 interface IMemoizeOptions<Result> {
-  cache: ICache<Result | Promise<Result>>
+  cache: ICache<Result>
 
   /**
    * Used to judge whether a function execution is too slow.
@@ -51,11 +52,23 @@ interface IMemoizeOptions<Result> {
   executionTimeThreshold?: number = 0
 }
 
-function memoize<
-  Result
-, Args extends any[]
-, Func extends (...args: Args) => Result | PromiseLike<Result>
->(options: IMemoizeOptions<Result>, fn: Func): Func
+function memoize<Result, Args extends any[]>(
+  options: IMemoizeOptions<Result>
+, fn: (...args: Args) => Result
+): (...args: Args) => Result
+```
+
+### memoizeAsync
+
+```ts
+interface IMemoizeAsyncOptions<Result> {
+  cache: ICache<Promise<Result>>
+}
+
+function memoizeAsync<Result, Args extends any[]>(
+  options: IMemoizeAsyncOptions<Result>
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
 ```
 
 ### StringKeyCache

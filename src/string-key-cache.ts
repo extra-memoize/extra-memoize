@@ -16,6 +16,10 @@ export class StringKeyCache<T> implements ICache<T> {
     return this.map.get(stringify(key))
   }
 
+  delete(key: unknown[]): boolean {
+    return this.map.delete(stringify(key))
+  }
+
   clear(): void {
     this.map.clear()
   }

@@ -3,6 +3,7 @@ export interface IMap<K, V> {
   has(key: K): boolean
   get(key: K): V | undefined
   clear(): void
+  delete(key: K): boolean
 }
 
 export type ICache<T> = IMap<unknown[], T>

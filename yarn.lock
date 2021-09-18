@@ -540,15 +540,7 @@
     "@blackglory/errors" "^1.1.2"
     justypes "^0.1.5"
 
-"@blackglory/structures@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@blackglory/structures/-/structures-0.2.3.tgz#176e5ac8a8e475ce1b0e8b62f1958e00f5df1222"
-  integrity sha512-rja+KT++IK28fX631MvO0Hx16BeG/c8+Oh4oQ+K1+sn4YB+AAwYX7YLKbMl8D61VlwSB1cKI9Rn8gO3Zvrlnrg==
-  dependencies:
-    "@blackglory/errors" "^1.1.2"
-    justypes "^0.1.5"
-
-"@blackglory/structures@^0.2.5":
+"@blackglory/structures@^0.2.3", "@blackglory/structures@^0.2.5":
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/@blackglory/structures/-/structures-0.2.5.tgz#22076055c6591fd31a40afa3e1d687c22bc8d98a"
   integrity sha512-t+G6M9XJlYPIcMZpOVpvkMimyCPcDkqoxiZY4xD7eRXFnkf4wLBtW18j3LbvtWJnFQqFE+0VHRuVK4X1EMrcdQ==
