@@ -1,6 +1,5 @@
 import { IStaleWhileRevalidateAndStaleIfErrorCache, State } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
-import { go } from '@blackglory/go'
 
 export function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
   {
@@ -20,7 +19,7 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends 
     if (state === State.Hit) {
       return value!
     } else if (state === State.StaleWhileRevalidate) {
-      go(async () => {
+      queueMicrotask(async () => {
         if (!pendings.has(key)) {
           refresh.call(this, key, args).catch(() => {})
         }

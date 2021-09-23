@@ -1,7 +1,6 @@
 import { IStaleWhileRevalidateAsyncCache } from '@src/types'
 import { isntUndefined } from '@blackglory/types'
 import stringify from 'fast-json-stable-stringify'
-import { go } from '@blackglory/go'
 
 export function memoizeStaleWhileRevalidateWithAsyncCache<Result, Args extends any[]>(
   {
@@ -19,7 +18,7 @@ export function memoizeStaleWhileRevalidateWithAsyncCache<Result, Args extends a
     const key = createKey.apply(this, args)
     const value = await cache.get(key)
     if (isntUndefined(value)) {
-      go(async () => {
+      queueMicrotask(async () => {
         // 注意, 这两个条件的位置不可调换
         if (await cache.isStaleWhileRevalidate(key) && !pendings.has(key)) {
           refresh.call(this, key, args).catch(() => {})
