@@ -215,6 +215,8 @@ function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<Result, Args e
 ```ts
 class LRUCache<T> implements ICache<T> {
   constructor(limit: number)
+
+  clear(): void
 }
 ```
 
@@ -225,6 +227,8 @@ The classic LRU cache.
 ```ts
 class ExpirableCache<T> implements ICache<T> {
   constructor(maxAge: number)
+
+  clear(): void
 }
 ```
 
@@ -235,6 +239,8 @@ The classisc expirable cache.
 ```ts
 class TLRUCache<T> implements ICache<T> {
   constructor(limit: number, maxAge: number)
+
+  clear(): void
 }
 ```
 

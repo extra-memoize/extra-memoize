@@ -30,4 +30,13 @@ describe('TLRUCache', () => {
     expect(cache.get('#2')).toBeUndefined()
     expect(cache.get('#3')).toBe(3)
   })
+
+  test('clear(): void', () => {
+    const map = new TLRUCache(999, 999)
+    map.set('key', 'value')
+    
+    map.clear()
+
+    expect(map.get('key')).toBeUndefined()
+  })
 })

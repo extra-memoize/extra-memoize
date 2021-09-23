@@ -1,12 +1,22 @@
 import { TLRUMap } from '@blackglory/structures'
 import { ICache } from '@src/types'
 
-export class TLRUCache<T> extends TLRUMap<string, T> implements ICache<T> {
+export class TLRUCache<T> implements ICache<T> {
+  private map: TLRUMap<string, T> 
+
   constructor(limit: number, private maxAge: number) {
-    super(limit)
+    this.map = new TLRUMap(limit)
   }
 
-  override set(key: string, value: T) {
-    return super.set(key, value, this.maxAge)
+  set(key: string, value: T): void {
+    this.map.set(key, value, this.maxAge)
+  }
+
+  get(key: string): T | undefined {
+    return this.map.get(key)
+  }
+
+  clear(): void {
+    this.map.clear()
   }
 }
