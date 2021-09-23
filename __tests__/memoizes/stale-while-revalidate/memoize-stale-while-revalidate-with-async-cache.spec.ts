@@ -127,10 +127,10 @@ describe(`
         const proResult2 = await result2 // 1, revalidate in background
         const result3 = memoizedFn() // stale
         const proResult3 = await result3 // 1, revalidating
-        await delay(101) // fn throws error
+        await delay(150) // fn throws error
         const result4 = memoizedFn() // stale, revalidate in background
         const proResult4 = await result4 // 1
-        await delay(101)
+        await delay(150)
         const result5 = memoizedFn() // hit
         const proResult5 = await result5 // 2
 
