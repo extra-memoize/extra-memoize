@@ -26,34 +26,40 @@ const memoized = memoize({ cache }, fn)
 ## API
 
 ```ts
-interface IMap<K, V> {
-  set(key: K, value: V): void
-  has(key: K): boolean
-  get(key: K): V | undefined
-  delete(key: K): boolean
-  clear(): void
+enum State {
+  Miss = 'miss'
+, Hit = 'hit'
+, StaleWhileRevalidate = 'stale-while-revalidate'
+, StaleIfError = 'state-if-error'
 }
 
-type ICache<T> = IMap<unknown[], T>
+interface ICache<T> {
+  set(key: string, value: T): void
+  get(key: string): T | undefined
+}
+
+interface IAsyncCache<T> {
+  set(key: string, value: T): Promise<void>
+  get(key: string): Promise<T | undefined>
+}
 ```
 
 ### memoize
 
 ```ts
-interface IMemoizeOptions<Result> {
-  cache: ICache<Result>
+export function memoize<Result, Args extends any[]>(
+  options: {
+    cache: ICache<Result>
+    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
 
-  /**
-   * Used to judge whether a function execution is too slow.
-   * Only when the excution time of function is
-   * greater than or equal to the value (in milliseconds),
-   * the return value of the function will be cached.
-   */
-  executionTimeThreshold?: number = 0
-}
-
-function memoize<Result, Args extends any[]>(
-  options: IMemoizeOptions<Result>
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
+  }
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
 ```
@@ -61,58 +67,173 @@ function memoize<Result, Args extends any[]>(
 ### memoizeAsync
 
 ```ts
-interface IMemoizeAsyncOptions<Result> {
-  cache: ICache<Promise<Result>>
-}
-
 function memoizeAsync<Result, Args extends any[]>(
-  options: IMemoizeAsyncOptions<Result>
+  options: {
+    cache: ICache<Result>
+    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+  }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
-### StringKeyCache
+### memoizeWithAsyncCache
 
 ```ts
-class StringKeyCache<T> implements ICache<T> {
-  constructor(map: IMap<string, T>)
+function memoizeWithAsyncCache<Result, Args extends any[]>(
+  options: {
+    cache: IAsyncCache<Result>
+    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+  }
+, fn: (...args: Args) => Result | PromiseLike<Result>
+): (...args: Args) => Promise<Result>
+```
+
+### stale-while-revalidate
+
+```ts
+interface IStaleWhileRevalidateCache<T> extends ICache<T> {
+  isStaleWhileRevalidate(key: string): boolean
+}
+
+interface IStaleWhileRevalidateAsyncCache<T> extends IAsyncCache<T> {
+  isStaleWhileRevalidate(key: string): Promise<boolean>
 }
 ```
 
-A cache wrapper that uses [fast-json-stable-stringify]
-to serialize the parameter list into a string.
+#### memoizeStaleWhileRevalidate
 
 ```ts
-const map = new Map()
-const cache = new StringKeyCache(map)
+function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+  options: {
+    cache: IStaleWhileRevalidateCache<Result>
+    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+  }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
 ```
 
-[fast-json-stable-stringify]: https://www.npmjs.com/package/fast-json-stable-stringify
-
-### LRUCache
+#### memoizeSWRWithAsyncCache
 
 ```ts
-class LRUCache<T> extends StringKeyCache<T> implements ICache<T> {
+function memoizeStaleWhileRevalidateWithAsyncCache<Result, Args extends any[]>(
+  options: {
+    cache: IStaleWhileRevalidateAsyncCache<Result>
+    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+  }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
+```
+
+### stale-if-error
+
+```ts
+interface IStaleIfErrorCache<T> {
+  set(key: string, value: T): void
+  get(key: string): [State.Miss, undefined]
+                  | [State.Hit | State.StaleIfError, T]
+}
+
+interface IStaleIfErrorAsyncCache<T> {
+  set(key: string, value: T): Promise<void>
+  get(key: string): Promise<
+                    | [State.Miss, undefined]
+                    | [State.Hit | State.StaleIfError, T]
+                    >
+}
+```
+
+#### memoizeStaleIfError
+
+```ts
+function memoizeStaleIfError<Result, Args extends any[]>(
+  options: {
+    cache: IStaleIfErrorCache<Result>
+    createKey?: (args: unknown[]) => string // The default is fast-json-stable-stringify
+  }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result> {
+```
+
+#### memoizeStaleIfErrorWithAsyncCache
+
+```ts
+function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+  options: {
+    cache: IStaleIfErrorAsyncCache<Result>
+    createKey?: (args: unknown[]) => string // The default is fast-json-stable-stringify
+  }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
+```
+
+### stale-while-revalidate & stale-if-error
+
+```ts
+interface IStaleWhileRevalidateAndStaleIfErrorCache<T> {
+  set(key: string, value: T): void
+  get(key: string): [State.Miss, undefined]
+                  | [State.Hit | State.StaleWhileRevalidate | State.StaleIfError, T]
+}
+
+interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
+  set(key: string, value: T): Promise<void>
+  get(key: string): Promise<
+                    | [State.Miss, undefined]
+                    | [State.Hit | State.StaleWhileRevalidate | State.StaleIfError, T]
+                    >
+}
+```
+
+#### memoizeStaleWhileRevalidateAndStaleIfError
+
+```ts
+function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
+  options: {
+    cache: IStaleWhileRevalidateAndStaleIfErrorCache<Result>
+    createKey?: (args: unknown[]) => string // The default is fast-json-stable-stringify
+  }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
+```
+
+#### memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache
+
+```ts
+function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+  options: {
+    cache: IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
+    createKey?: (args: unknown[]) => string // The default is fast-json-stable-stringify
+  }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
+```
+
+### Caches
+
+#### LRUCache
+
+```ts
+class LRUCache<T> implements ICache<T> {
   constructor(limit: number)
 }
 ```
 
 The classic LRU cache.
 
-### ExpirableCache
+#### ExpirableCache
 
 ```ts
-class ExpirableCache<T> extends StringKeyCache<T> implements ICache<T> {
+class ExpirableCache<T> implements ICache<T> {
   constructor(maxAge: number)
 }
 ```
 
 The classisc expirable cache.
 
-### TLRUCache
+#### TLRUCache
 
 ```ts
-class TLRUCache<T> extends StringKeyCache<T> implements ICache<T> {
+class TLRUCache<T> implements ICache<T> {
   constructor(limit: number, maxAge: number)
 }
 ```

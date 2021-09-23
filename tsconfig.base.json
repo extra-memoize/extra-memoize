@@ -9,8 +9,10 @@
   , "baseUrl": "."
   , "paths": {
       "@src/*": ["src/*"]
-    , "@helpers/*": ["src/helpers/*"]
-    , "@utils/*": ["src/utils/*"]
+    , "@caches": ["src/caches/index"]
+    , "@caches/*": ["src/caches/*"]
+    , "@memoizes": ["src/memoizes/index"]
+    , "@memoizes/*": ["src/memoizes/*"]
     , "@test/*": ["__tests__/*"]
     }
   }
