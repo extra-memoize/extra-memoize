@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/BlackGlory/extra-memoize/compare/v0.2.0...v0.3.0) (2021-09-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* rewrite
+
+### Features
+
+* rewrite ([a5ee975](https://github.com/BlackGlory/extra-memoize/commit/a5ee97540e6f4fa7e0bafdff2afcf0f0c5feba50))
+
 ## [0.2.0](https://github.com/BlackGlory/extra-memoize/compare/v0.1.2...v0.2.0) (2021-09-18)
 
 
