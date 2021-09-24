@@ -4,7 +4,7 @@ import { ICache } from '@src/types'
 export class ExpirableCache<T> implements ICache<T> {
   private map: ExpirableMap<string, T>
 
-  constructor(private maxAge: number) {
+  constructor(private timeToLive: number) {
     this.map = new ExpirableMap()
   }
 
@@ -13,7 +13,7 @@ export class ExpirableCache<T> implements ICache<T> {
   }
 
   set(key: string, value: T): void {
-    this.map.set(key, value, this.maxAge)
+    this.map.set(key, value, this.timeToLive)
   }
 
   clear(): void {
