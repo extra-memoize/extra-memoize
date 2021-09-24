@@ -7,7 +7,7 @@ export function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<Result,
   , createKey: createKey = stringify
   }: {
     cache: IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
-    createKey?: (args: unknown[]) => string
+    createKey?: (args: Args) => string
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {

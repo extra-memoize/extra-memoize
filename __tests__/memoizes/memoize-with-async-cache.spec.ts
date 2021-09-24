@@ -8,7 +8,7 @@ describe(`
   memoizeWithAsyncCache<Result, Args extends any[]>(
     options: {
       cache: IAsyncCache<Result>
-      createKey?: (...args: Args) => string
+      createKey?: (args: Args) => string
     }
   , fn: (...args: Args) => Result | PromiseLike<Result>
   ): (...args: Args) => Promise<Result>

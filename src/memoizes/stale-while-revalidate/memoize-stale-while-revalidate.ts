@@ -5,17 +5,17 @@ import { isntUndefined } from '@blackglory/types'
 export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
   {
     cache
-  , createKey = (...args) => stringify(args)
+  , createKey = stringify
   }: {
     cache: IStaleWhileRevalidateCache<Result>
-    createKey?: (...args: Args) => string
+    createKey?: (args: Args) => string
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {
   const pendings = new Map<string, Promise<Result>>()
 
   return async function (this: unknown, ...args: Args): Promise<Result> {
-    const key = createKey.apply(this, args)
+    const key = createKey(args)
     const value = cache.get(key)
     if (isntUndefined(value)) {
       queueMicrotask(async () => {

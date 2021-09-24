@@ -7,12 +7,9 @@ import '@blackglory/jest-matchers'
 
 describe(`
   memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
-    {
-      cache
-    , createKey: createKey = stringify
-    }: {
+    options: {
       cache: IStaleWhileRevalidateAndStaleIfErrorCache<Result>
-      createKey?: (args: unknown[]) => string
+      createKey?: (args: Args) => string
     }
   , fn: (...args: Args) => PromiseLike<Result>
   ): (...args: Args) => Promise<Result>

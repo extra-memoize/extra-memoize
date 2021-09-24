@@ -7,7 +7,7 @@ describe(`
   memoize<Result, Args extends any[]>(
     options: {
       cache: ICache<Result>
-      createKey?: (...args: Args) => string
+      createKey?: (args: Args) => string
       executionTimeThreshold?: number
     }
   , fn: (...args: Args) => Result

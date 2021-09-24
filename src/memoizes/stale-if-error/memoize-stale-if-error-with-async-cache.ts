@@ -7,7 +7,7 @@ export function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   , createKey: createKey = stringify
   }: {
     cache: IStaleIfErrorAsyncCache<Result>
-    createKey?: (args: unknown[]) => string
+    createKey?: (args: Args) => string
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {

@@ -9,7 +9,7 @@ describe(`
   memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
     options: {
       cache: IStaleIfErrorAsyncCache<Result>
-      createKey?: (args: unknown[]) => string
+      createKey?: (args: Args) => string
     }
   , fn: (...args: Args) => PromiseLike<Result>
   ): (...args: Args) => Promise<Result>

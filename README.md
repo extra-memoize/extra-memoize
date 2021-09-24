@@ -50,7 +50,7 @@ interface IAsyncCache<T> {
 export function memoize<Result, Args extends any[]>(
   options: {
     cache: ICache<Result>
-    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
 
     /**
      * Used to judge whether a function execution is too slow.
@@ -70,7 +70,7 @@ export function memoize<Result, Args extends any[]>(
 function memoizeAsync<Result, Args extends any[]>(
   options: {
     cache: ICache<Result>
-    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
@@ -82,7 +82,7 @@ function memoizeAsync<Result, Args extends any[]>(
 function memoizeWithAsyncCache<Result, Args extends any[]>(
   options: {
     cache: IAsyncCache<Result>
-    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => Result | PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
@@ -106,19 +106,19 @@ interface IStaleWhileRevalidateAsyncCache<T> extends IAsyncCache<T> {
 function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
   options: {
     cache: IStaleWhileRevalidateCache<Result>
-    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
-#### memoizeSWRWithAsyncCache
+#### memoizeStaleWhileRevalidateWithAsyncCache
 
 ```ts
 function memoizeStaleWhileRevalidateWithAsyncCache<Result, Args extends any[]>(
   options: {
     cache: IStaleWhileRevalidateAsyncCache<Result>
-    createKey?: (...args: Args) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
@@ -148,7 +148,7 @@ interface IStaleIfErrorAsyncCache<T> {
 function memoizeStaleIfError<Result, Args extends any[]>(
   options: {
     cache: IStaleIfErrorCache<Result>
-    createKey?: (args: unknown[]) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {
@@ -160,7 +160,7 @@ function memoizeStaleIfError<Result, Args extends any[]>(
 function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   options: {
     cache: IStaleIfErrorAsyncCache<Result>
-    createKey?: (args: unknown[]) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
@@ -190,7 +190,7 @@ interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
 function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
   options: {
     cache: IStaleWhileRevalidateAndStaleIfErrorCache<Result>
-    createKey?: (args: unknown[]) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
@@ -202,7 +202,7 @@ function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
 function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   options: {
     cache: IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
-    createKey?: (args: unknown[]) => string // The default is fast-json-stable-stringify
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>

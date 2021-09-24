@@ -6,10 +6,10 @@ export function memoize<Result, Args extends any[]>(
   {
     cache
   , executionTimeThreshold = 0
-  , createKey = (...args) => stringify(args)
+  , createKey = stringify
   }: {
     cache: ICache<Result>
-    createKey?: (...args: Args) => string
+    createKey?: (args: Args) => string
 
     /**
      * Used to judge whether a function execution is too slow.
@@ -22,7 +22,7 @@ export function memoize<Result, Args extends any[]>(
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result {
   return function (this: unknown, ...args: Args): Result {
-    const key = createKey.apply(this, args)
+    const key = createKey(args)
     const value = cache.get(key)
     if (isntUndefined(value)) return value
 

@@ -5,17 +5,17 @@ import { isntUndefined } from '@blackglory/types'
 export function memoizeWithAsyncCache<Result, Args extends any[]>(
   {
     cache
-  , createKey = (...args) => stringify(args)
+  , createKey = stringify
   }: {
     cache: IAsyncCache<Result>
-    createKey?: (...args: Args) => string
+    createKey?: (args: Args) => string
   }
 , fn: (...args: Args) => Result | PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {
   const pendings = new Map<string, Promise<Result>>()
 
   return async function (this: unknown, ...args: Args): Promise<Result> {
-    const key = createKey.apply(this, args)
+    const key = createKey(args)
     const value = await cache.get(key)
     if (isntUndefined(value)) return value
 
