@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/BlackGlory/extra-memoize/compare/v0.3.3...v0.4.0) (2021-09-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* The signature of `createKey` was changed
+
+### Features
+
+* add more caches ([1e5fafd](https://github.com/BlackGlory/extra-memoize/commit/1e5fafd69011b073bf9eb1dff1ca1d4ca2c07020))
+
+
+### Bug Fixes
+
+* createKey ([5a6e23e](https://github.com/BlackGlory/extra-memoize/commit/5a6e23e77315ac8e28d212b2e3069eab49658c92))
+
 ### [0.3.3](https://github.com/BlackGlory/extra-memoize/compare/v0.3.2...v0.3.3) (2021-09-23)
 
 
