@@ -1,7 +1,10 @@
 import { IStaleIfErrorAsyncCache, State } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 
-export function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+export function memoizeStaleIfErrorWithAsyncCache<
+  Result
+, Args extends any[] = any[]
+>(
   {
     cache
   , createKey: createKey = stringify

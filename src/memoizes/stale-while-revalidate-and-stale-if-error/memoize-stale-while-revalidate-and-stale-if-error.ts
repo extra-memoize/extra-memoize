@@ -1,7 +1,10 @@
 import { IStaleWhileRevalidateAndStaleIfErrorCache, State } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 
-export function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
+export function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[] = any[]
+>(
   {
     cache
   , createKey: createKey = stringify

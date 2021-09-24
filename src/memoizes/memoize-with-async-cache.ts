@@ -2,7 +2,7 @@ import { IAsyncCache } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 import { isntUndefined } from '@blackglory/types'
 
-export function memoizeWithAsyncCache<Result, Args extends any[]>(
+export function memoizeWithAsyncCache<Result, Args extends any[] = any[]>(
   {
     cache
   , createKey = stringify

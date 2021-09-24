@@ -2,7 +2,7 @@ import { ICache } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 import { isntUndefined } from '@blackglory/types'
 
-export function memoize<Result, Args extends any[]>(
+export function memoize<Result, Args extends any[] = any[]>(
   {
     cache
   , executionTimeThreshold = 0

@@ -2,7 +2,10 @@ import { IStaleWhileRevalidateCache } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 import { isntUndefined } from '@blackglory/types'
 
-export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+export function memoizeStaleWhileRevalidate<
+  Result
+, Args extends any[] = any[]
+>(
   {
     cache
   , createKey = stringify
