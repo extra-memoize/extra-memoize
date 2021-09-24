@@ -1,7 +1,7 @@
 import { ExpirableMap } from '@blackglory/structures'
 import { ICache } from '@src/types'
 
-export class ExpirableCache<T> implements ICache<T> {
+export class ExpirableCache<T = any> implements ICache<T> {
   private map: ExpirableMap<string, T>
 
   constructor(private timeToLive: number) {

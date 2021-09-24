@@ -2,12 +2,16 @@ import { ICache } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 import { isntUndefined } from '@blackglory/types'
 
-export function memoizeAsync<Result, Args extends any[] = any[]>(
+export function memoizeAsync<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
   {
     cache
   , createKey = stringify
   }: {
-    cache: ICache<Result>
+    cache: ICache<CacheValue>
     createKey?: (args: Args) => string
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -17,7 +21,7 @@ export function memoizeAsync<Result, Args extends any[] = any[]>(
   return async function (this: unknown, ...args: Args): Promise<Result> {
     const key = createKey(args)
     const value = cache.get(key)
-    if (isntUndefined(value)) return value
+    if (isntUndefined(value)) return value as any as Result
 
     if (pendings.has(key)) return pendings.get(key)!
     return await refresh.call(this, key, args)

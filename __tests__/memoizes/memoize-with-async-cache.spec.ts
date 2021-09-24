@@ -5,9 +5,9 @@ import { AsyncCache } from '@test/utils'
 import '@blackglory/jest-matchers'
 
 describe(`
-  memoizeWithAsyncCache<Result, Args extends any[]>(
+  memoizeWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
     options: {
-      cache: IAsyncCache<Result>
+      cache: IAsyncCache<CacheValue>
       createKey?: (args: Args) => string
     }
   , fn: (...args: Args) => Result | PromiseLike<Result>

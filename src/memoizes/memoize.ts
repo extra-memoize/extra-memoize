@@ -2,13 +2,17 @@ import { ICache } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 import { isntUndefined } from '@blackglory/types'
 
-export function memoize<Result, Args extends any[] = any[]>(
+export function memoize<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
   {
     cache
   , executionTimeThreshold = 0
   , createKey = stringify
   }: {
-    cache: ICache<Result>
+    cache: ICache<CacheValue>
     createKey?: (args: Args) => string
 
     /**
@@ -24,7 +28,7 @@ export function memoize<Result, Args extends any[] = any[]>(
   return function (this: unknown, ...args: Args): Result {
     const key = createKey(args)
     const value = cache.get(key)
-    if (isntUndefined(value)) return value
+    if (isntUndefined(value)) return value as any as Result
 
     const startTime = Date.now()
     const result = fn.apply(this, args)

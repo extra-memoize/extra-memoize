@@ -4,9 +4,9 @@ import { getError } from 'return-style'
 import '@blackglory/jest-matchers'
 
 describe(`
-  memoize<Result, Args extends any[]>(
+  memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
     options: {
-      cache: ICache<Result>
+      cache: ICache<CacheValue>
       createKey?: (args: Args) => string
       executionTimeThreshold?: number
     }

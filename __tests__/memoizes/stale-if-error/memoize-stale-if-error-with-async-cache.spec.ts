@@ -6,9 +6,9 @@ import { delay } from 'extra-promise'
 import '@blackglory/jest-matchers'
 
 describe(`
-  memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+  memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
     options: {
-      cache: IStaleIfErrorAsyncCache<Result>
+      cache: IStaleIfErrorAsyncCache<CacheValue>
       createKey?: (args: Args) => string
     }
   , fn: (...args: Args) => PromiseLike<Result>

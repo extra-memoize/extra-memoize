@@ -6,9 +6,9 @@ import { delay } from 'extra-promise'
 import '@blackglory/jest-matchers'
 
 describe(`
-  memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+  memoizeStaleWhileRevalidate<CacheValue, Result extends CacheValue, Args extends any[]>(
     options: {
-      cache: ISWRCache<Result>
+      cache: ISWRCache<CacheValue>
       createKey?: (args: Args) => string
     }
   , fn: (...args: Args) => PromiseLike<Result>
@@ -19,7 +19,7 @@ describe(`
       await delay(100)
       return text
     })
-    const cache = new SWRCache(() => State.Hit)
+    const cache = new SWRCache<any>(() => State.Hit)
 
     const memoizedFn = memoizeStaleWhileRevalidate({ cache }, fn)
     const result1 = memoizedFn('foo')

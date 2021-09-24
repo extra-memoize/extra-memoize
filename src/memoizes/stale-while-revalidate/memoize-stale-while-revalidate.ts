@@ -3,14 +3,15 @@ import stringify from 'fast-json-stable-stringify'
 import { isntUndefined } from '@blackglory/types'
 
 export function memoizeStaleWhileRevalidate<
-  Result
-, Args extends any[] = any[]
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
 >(
   {
     cache
   , createKey = stringify
   }: {
-    cache: IStaleWhileRevalidateCache<Result>
+    cache: IStaleWhileRevalidateCache<CacheValue>
     createKey?: (args: Args) => string
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -26,7 +27,7 @@ export function memoizeStaleWhileRevalidate<
           refresh.call(this, key, args).catch(() => {})
         }
       })
-      return value
+      return value as any as Result
     } else {
       if (pendings.has(key)) return pendings.get(key)!
       return await refresh.call(this, key, args)

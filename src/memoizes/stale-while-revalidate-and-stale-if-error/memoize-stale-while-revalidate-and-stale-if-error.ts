@@ -2,14 +2,15 @@ import { IStaleWhileRevalidateAndStaleIfErrorCache, State } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 
 export function memoizeStaleWhileRevalidateAndStaleIfError<
-  Result
-, Args extends any[] = any[]
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
 >(
   {
     cache
   , createKey: createKey = stringify
   }: {
-    cache: IStaleWhileRevalidateAndStaleIfErrorCache<Result>
+    cache: IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
     createKey?: (args: Args) => string
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -20,26 +21,26 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
     const key = createKey(args)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {
-      return value!
+      return value! as any as Result
     } else if (state === State.StaleWhileRevalidate) {
       queueMicrotask(async () => {
         if (!pendings.has(key)) {
           refresh.call(this, key, args).catch(() => {})
         }
       })
-      return value!
+      return value! as any as Result
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
           return await pendings.get(key)!
         } catch {
-          return value!
+          return value! as any as Result
         }
       } else {
         try {
           return await refresh.call(this, key, args)
         } catch {
-          return value!
+          return value! as any as Result
         }
       }
     } else {

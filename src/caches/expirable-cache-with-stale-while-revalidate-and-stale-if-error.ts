@@ -7,7 +7,7 @@ interface IRecord<T> {
   value: T
 }
 
-export class ExpirableCacheWithStaleWhileRevalidateAndStaleIfError<T> implements IStaleWhileRevalidateAndStaleIfErrorCache<T> {
+export class ExpirableCacheWithStaleWhileRevalidateAndStaleIfError<T = any> implements IStaleWhileRevalidateAndStaleIfErrorCache<T> {
   private cache: ExpirableCache<IRecord<T>>
 
   constructor(

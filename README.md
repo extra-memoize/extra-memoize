@@ -47,9 +47,9 @@ interface IAsyncCache<T> {
 ### memoize
 
 ```ts
-export function memoize<Result, Args extends any[]>(
+export function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: ICache<Result>
+    cache: ICache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
 
     /**
@@ -67,9 +67,9 @@ export function memoize<Result, Args extends any[]>(
 ### memoizeAsync
 
 ```ts
-function memoizeAsync<Result, Args extends any[]>(
+function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: ICache<Result>
+    cache: ICache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -79,9 +79,9 @@ function memoizeAsync<Result, Args extends any[]>(
 ### memoizeWithAsyncCache
 
 ```ts
-function memoizeWithAsyncCache<Result, Args extends any[]>(
+function memoizeWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: IAsyncCache<Result>
+    cache: IAsyncCache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => Result | PromiseLike<Result>
@@ -103,9 +103,9 @@ interface IStaleWhileRevalidateAsyncCache<T> extends IAsyncCache<T> {
 #### memoizeStaleWhileRevalidate
 
 ```ts
-function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+function memoizeStaleWhileRevalidate<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: IStaleWhileRevalidateCache<Result>
+    cache: IStaleWhileRevalidateCache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -115,9 +115,9 @@ function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
 #### memoizeStaleWhileRevalidateWithAsyncCache
 
 ```ts
-function memoizeStaleWhileRevalidateWithAsyncCache<Result, Args extends any[]>(
+function memoizeStaleWhileRevalidateWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: IStaleWhileRevalidateAsyncCache<Result>
+    cache: IStaleWhileRevalidateAsyncCache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -145,9 +145,9 @@ interface IStaleIfErrorAsyncCache<T> {
 #### memoizeStaleIfError
 
 ```ts
-function memoizeStaleIfError<Result, Args extends any[]>(
+function memoizeStaleIfError<CacheValue, Resulte extends CacheValue, Args extends any[]>(
   options: {
-    cache: IStaleIfErrorCache<Result>
+    cache: IStaleIfErrorCache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -157,9 +157,9 @@ function memoizeStaleIfError<Result, Args extends any[]>(
 #### memoizeStaleIfErrorWithAsyncCache
 
 ```ts
-function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+function memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: IStaleIfErrorAsyncCache<Result>
+    cache: IStaleIfErrorAsyncCache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -187,9 +187,9 @@ interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
 #### memoizeStaleWhileRevalidateAndStaleIfError
 
 ```ts
-function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
+function memoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: IStaleWhileRevalidateAndStaleIfErrorCache<Result>
+    cache: IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -199,9 +199,9 @@ function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
 #### memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache
 
 ```ts
-function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
+    cache: IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
     createKey?: (args: Args) => string // The default is fast-json-stable-stringify
   }
 , fn: (...args: Args) => PromiseLike<Result>

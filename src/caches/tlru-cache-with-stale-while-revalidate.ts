@@ -7,7 +7,7 @@ interface IRecord<T> {
   value: T
 }
 
-export class TLRUCacheWithStaleWhileRevalidate<T> implements IStaleWhileRevalidateCache<T> {
+export class TLRUCacheWithStaleWhileRevalidate<T = any> implements IStaleWhileRevalidateCache<T> {
   private cache: TLRUCache<IRecord<T>>
 
   constructor(

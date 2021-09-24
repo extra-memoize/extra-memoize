@@ -7,7 +7,7 @@ interface IRecord<T> {
   value: T
 }
 
-export class TLRUCacheWithStaleIfError<T> implements IStaleIfErrorCache<T> {
+export class TLRUCacheWithStaleIfError<T = any> implements IStaleIfErrorCache<T> {
   private cache: TLRUCache<IRecord<T>>
 
   constructor(
