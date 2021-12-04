@@ -1,6 +1,7 @@
 import { IStaleWhileRevalidateCache } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
 import { isntUndefined } from '@blackglory/types'
+import { pass } from '@blackglory/pass'
 
 export function memoizeStaleWhileRevalidate<
   CacheValue
@@ -24,7 +25,7 @@ export function memoizeStaleWhileRevalidate<
     if (isntUndefined(value)) {
       queueMicrotask(async () => {
         if (cache.isStaleWhileRevalidate(key) && !pendings.has(key)) {
-          refresh.call(this, key, args).catch(() => {})
+          refresh.call(this, key, args).catch(pass)
         }
       })
       return value as any as Result

@@ -1,5 +1,6 @@
 import { IStaleWhileRevalidateAndStaleIfErrorCache, State } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
+import { pass } from '@blackglory/pass'
 
 export function memoizeStaleWhileRevalidateAndStaleIfError<
   CacheValue
@@ -25,7 +26,7 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
     } else if (state === State.StaleWhileRevalidate) {
       queueMicrotask(async () => {
         if (!pendings.has(key)) {
-          refresh.call(this, key, args).catch(() => {})
+          refresh.call(this, key, args).catch(pass)
         }
       })
       return value! as any as Result
