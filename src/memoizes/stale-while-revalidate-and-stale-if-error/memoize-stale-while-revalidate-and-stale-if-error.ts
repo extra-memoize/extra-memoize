@@ -1,6 +1,6 @@
 import { IStaleWhileRevalidateAndStaleIfErrorCache, State } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
-import { pass } from '@blackglory/pass'
+import { pass } from '@blackglory/prelude'
 
 export function memoizeStaleWhileRevalidateAndStaleIfError<
   CacheValue

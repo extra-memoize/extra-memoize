@@ -1,6 +1,6 @@
 import { ExpirableCache } from './expirable-cache'
 import { IStaleWhileRevalidateAndStaleIfErrorCache, State } from '@src/types'
-import { isUndefined } from '@blackglory/types'
+import { isUndefined } from '@blackglory/prelude'
 
 interface IRecord<T> {
   updatedAt: number

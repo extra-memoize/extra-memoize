@@ -1,7 +1,7 @@
 import { IStaleWhileRevalidateAsyncCache } from '@src/types'
-import { isntUndefined } from '@blackglory/types'
+import { isntUndefined } from '@blackglory/prelude'
 import stringify from 'fast-json-stable-stringify'
-import { pass } from '@blackglory/pass'
+import { pass } from '@blackglory/prelude'
 
 export function memoizeStaleWhileRevalidateWithAsyncCache<
   CacheValue

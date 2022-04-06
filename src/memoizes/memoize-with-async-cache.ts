@@ -1,6 +1,6 @@
 import { IAsyncCache } from '@src/types'
 import stringify from 'fast-json-stable-stringify'
-import { isntUndefined } from '@blackglory/types'
+import { isntUndefined } from '@blackglory/prelude'
 
 export function memoizeWithAsyncCache<
   CacheValue
