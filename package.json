@@ -12,7 +12,7 @@
   "main": "lib/es2018/index.js",
   "types": "lib/es2018/index.d.ts",
   "sideEffects": false,
-  "repository": "git@github.com:BlackGlory/extra-memoize.git",
+  "repository": "git@github.com:extra-memoize/extra-memoize.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",
   "scripts": {
