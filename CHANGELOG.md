@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.8](https://github.com/extra-memoize/extra-memoize/compare/v0.4.7...v0.4.8) (2022-04-06)
+
 ### [0.4.7](https://github.com/BlackGlory/extra-memoize/compare/v0.4.6...v0.4.7) (2022-03-23)
 
 ### [0.4.6](https://github.com/BlackGlory/extra-memoize/compare/v0.4.5...v0.4.6) (2022-01-06)
