@@ -9,17 +9,19 @@ export function memoizeWithAsyncCache<
 >(
   {
     cache
-  , createKey = stringify
+  , name
+  , createKey = args => stringify(args)
   }: {
     cache: IAsyncCache<CacheValue>
-    createKey?: (args: Args) => string
+    name?: string
+    createKey?: (args: Args, name?: string) => string
   }
 , fn: (...args: Args) => Result | PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {
   const pendings = new Map<string, Promise<Result>>()
 
   return async function (this: unknown, ...args: Args): Promise<Result> {
-    const key = createKey(args)
+    const key = createKey(args, name)
     const value = await cache.get(key)
     if (isntUndefined(value)) return value as any as Result
 

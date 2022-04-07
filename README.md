@@ -7,7 +7,6 @@ Most memoize functions include strategies (such as TTL), which will actually cau
 `extra-memoize` takes another approach, its memoize function is very light. It delegates the implementation of the strategies to the cache layer and cache wrapper. This allows the cache backend to fully utilize their performance.
 
 ## Install
-
 ```sh
 npm install --save extra-memoize
 # or
@@ -15,7 +14,6 @@ yarn add extra-memoize
 ```
 
 ## Usage
-
 ```ts
 import { memoize, LRUCache } from 'extra-memoize'
 
@@ -24,7 +22,6 @@ const memoized = memoize({ cache }, fn)
 ```
 
 ## API
-
 ```ts
 enum State {
   Miss = 'miss'
@@ -45,12 +42,12 @@ interface IAsyncCache<T> {
 ```
 
 ### memoize
-
 ```ts
 export function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
     cache: ICache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name?: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args)
 
     /**
      * Used to judge whether a function execution is too slow.
@@ -65,31 +62,30 @@ export function memoize<CacheValue, Result extends CacheValue, Args extends any[
 ```
 
 ### memoizeAsync
-
 ```ts
 function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
     cache: ICache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name?: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args)
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
 ### memoizeWithAsyncCache
-
 ```ts
 function memoizeWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
     cache: IAsyncCache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name?: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args)
   }
 , fn: (...args: Args) => Result | PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
 ### stale-while-revalidate
-
 ```ts
 interface IStaleWhileRevalidateCache<T> extends ICache<T> {
   isStaleWhileRevalidate(key: string): boolean
@@ -101,31 +97,30 @@ interface IStaleWhileRevalidateAsyncCache<T> extends IAsyncCache<T> {
 ```
 
 #### memoizeStaleWhileRevalidate
-
 ```ts
 function memoizeStaleWhileRevalidate<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
     cache: IStaleWhileRevalidateCache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name?: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args)
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
 #### memoizeStaleWhileRevalidateWithAsyncCache
-
 ```ts
 function memoizeStaleWhileRevalidateWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
     cache: IStaleWhileRevalidateAsyncCache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name?: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args)
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
 ### stale-if-error
-
 ```ts
 interface IStaleIfErrorCache<T> {
   set(key: string, value: T): void
@@ -143,31 +138,30 @@ interface IStaleIfErrorAsyncCache<T> {
 ```
 
 #### memoizeStaleIfError
-
 ```ts
 function memoizeStaleIfError<CacheValue, Resulte extends CacheValue, Args extends any[]>(
   options: {
     cache: IStaleIfErrorCache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name?: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args)
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {
 ```
 
 #### memoizeStaleIfErrorWithAsyncCache
-
 ```ts
 function memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
     cache: IStaleIfErrorAsyncCache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args)
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
 ### stale-while-revalidate & stale-if-error
-
 ```ts
 interface IStaleWhileRevalidateAndStaleIfErrorCache<T> {
   set(key: string, value: T): void
@@ -185,33 +179,31 @@ interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
 ```
 
 #### memoizeStaleWhileRevalidateAndStaleIfError
-
 ```ts
 function memoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
     cache: IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name?: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args)
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
 #### memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache
-
 ```ts
 function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
     cache: IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
-    createKey?: (args: Args) => string // The default is fast-json-stable-stringify
+    name?: string
+    createKey?: (args: Args) => string // The default is fast-json-stable-stringify(args)
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
 ### Caches
-
 #### LRUCache
-
 ```ts
 class LRUCache<T> implements ICache<T> {
   constructor(limit: number)
@@ -223,7 +215,6 @@ class LRUCache<T> implements ICache<T> {
 The classic LRU cache.
 
 #### ExpirableCache
-
 ```ts
 class ExpirableCache<T> implements ICache<T> {
   constructor(timeToLive: number /*ms*/)
@@ -235,7 +226,6 @@ class ExpirableCache<T> implements ICache<T> {
 The classisc expirable cache.
 
 ##### ExpirableCacheWithStaleWhileRevalidate
-
 ```ts
 class ExpirableCacheWithStaleWhileRevalidate<T> implements IStaleWhileRevalidateCache<T> {
   constructor(timeToLive: number /*ms*/, staleWhileRevalidate: number /*ms*/)
@@ -243,7 +233,6 @@ class ExpirableCacheWithStaleWhileRevalidate<T> implements IStaleWhileRevalidate
 ```
 
 ##### ExpirableCacheWithStaleIfError
-
 ```ts
 class ExpirableCacheWithStaleIfError<T> implements IStaleIfErrorCache<T> {
   constructor(timeToLive: number /*ms*/, staleIfError: number /*ms*/)
@@ -251,7 +240,6 @@ class ExpirableCacheWithStaleIfError<T> implements IStaleIfErrorCache<T> {
 ```
 
 ##### ExpirableCacheWithStaleWhileRevalidateAndStaleIfError
-
 ```ts
 class ExpirableCacheWithStaleWhileRevalidateAndStaleIfError<T> implements IStaleWhileRevalidateAndStaleIfErrorCache<T> {
   constructor(
@@ -263,7 +251,6 @@ class ExpirableCacheWithStaleWhileRevalidateAndStaleIfError<T> implements IStale
 ```
 
 #### TLRUCache
-
 ```ts
 class TLRUCache<T> implements ICache<T> {
   constructor(limit: number, timeToLive: number /*ms*/)
@@ -275,7 +262,6 @@ class TLRUCache<T> implements ICache<T> {
 The classic TLRU cache.
 
 ##### TLRUCacheWithStaleWhileRevalidate
-
 ```ts
 class TLRUCacheWithStaleWhileRevalidate<T> implements IStaleWhileRevalidateCache<T> {
   constructor(limit: number, timeToLive: number /*ms*/, staleWhileRevalidate: number /*ms*/)
@@ -283,7 +269,6 @@ class TLRUCacheWithStaleWhileRevalidate<T> implements IStaleWhileRevalidateCache
 ```
 
 ##### TLRUCacheWithStaleIfError
-
 ```ts
 class TLRUCacheWithStaleIfError<T> implements IStaleIfErrorCache<T> {
   constructor(limit: number, timeToLive: number /*ms*/, staleIfError: number /*ms*/)
@@ -291,7 +276,6 @@ class TLRUCacheWithStaleIfError<T> implements IStaleIfErrorCache<T> {
 ```
 
 ##### TLRUCacheWithStaleWhileRevalidateAndStaleIfError
-
 ```ts
 class TLRUCacheWithStaleWhileRevalidateAndStaleIfError<T> implements IStaleWhileRevalidateAndStaleIfErrorCache<T> {
   constructor(
