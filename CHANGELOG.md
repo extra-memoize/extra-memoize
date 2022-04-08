@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/extra-memoize/extra-memoize/compare/v0.4.9...v0.5.0) (2022-04-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove caches
+* rewrite default createKey algorithm
+
+### Features
+
+* rewrite default createKey algorithm ([8989378](https://github.com/extra-memoize/extra-memoize/commit/898937892906e06bf0fa62348fe6a0dba90dd2f7))
+
+
+* remove caches ([8c1f161](https://github.com/extra-memoize/extra-memoize/commit/8c1f161b231033918a8f24a71ddc68dd21261083))
+
 ### [0.4.9](https://github.com/extra-memoize/extra-memoize/compare/v0.4.8...v0.4.9) (2022-04-07)
 
 
