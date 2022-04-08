@@ -736,6 +736,20 @@
     iterable-operator "^1.0.0"
     justypes "^2.0.0"
 
+"@blackglory/prelude@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@blackglory/prelude/-/prelude-0.1.1.tgz#d08bd1e2f08cae11ea5bc622ffa5320148bd8c92"
+  integrity sha512-LED+9S06HxUrn4APcC77OYanXoucaj8oe+V6TeDPxKnmNbtHGzXbho/nvq0oH3Yhr9H2P6jRfUPcdjU5dAM9Ig==
+  dependencies:
+    "@blackglory/errors" "^2.2.1"
+    "@blackglory/go" "^1.0.0"
+    "@blackglory/log" "^1.0.0"
+    "@blackglory/pass" "^1.0.0"
+    "@blackglory/types" "^1.1.0"
+    extra-lazy "^1.0.1"
+    iterable-operator "^1.0.1"
+    justypes "^2.0.0"
+
 "@blackglory/structures@^0.3.5":
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/@blackglory/structures/-/structures-0.3.5.tgz#f6af7c598e00f9c51157505d3d6560409cfa529b"
@@ -759,6 +773,14 @@
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-1.0.1.tgz#2beb5cd0539cf3d481479d84b5f4f5861501fb28"
   integrity sha512-hymFoc//rnjIjSOCmv8Nr7Wd1zM0GQaS3TW9NaWqZqteRPsImgetjZwHU/h+TiCdAiaXf6OW4eav9/Mt3tvbKg==
+  dependencies:
+    justypes "^2.0.0"
+    lodash "^4.17.21"
+
+"@blackglory/types@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-1.1.0.tgz#fa618e2289054b0d870b9e543a2b201eae81c3c0"
+  integrity sha512-bSdRnP99H53WV2PR+P9Wc52hedIZPaHX2s+/J5112vcoXHoo19brxGu6XiAc5wnf4/AZYprcUoV7fQDu5TecFw==
   dependencies:
     justypes "^2.0.0"
     lodash "^4.17.21"
@@ -2875,6 +2897,13 @@ extra-lazy@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/extra-lazy/-/extra-lazy-1.0.1.tgz#d657be53103725bfe4471e74134fcf0d0b805a1b"
   integrity sha512-z3ze3yom4ynosHpO9q9/4c3mFGygSsWiMTfgySY/tFEIGZAGXR14s7c73BD6itMfVr27GW1xqzndWt2NwM7xnQ==
+  dependencies:
+    lodash "^4.17.21"
+
+extra-lazy@^1.0.1:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/extra-lazy/-/extra-lazy-1.1.0.tgz#a023dd8c5cc0346a358ee8b18b58c10855e16648"
+  integrity sha512-l07MdYQslNpfis5sQuW1ckOrorWgscUYf4D+EvNfY0hH6d+6/W8nPjej3klbv/oq/qT8q79XTOJ75Z8/g/Ywaw==
   dependencies:
     lodash "^4.17.21"
 
