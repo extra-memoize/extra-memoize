@@ -1,5 +1,5 @@
 import { IStaleIfErrorAsyncCache, State } from '@src/types'
-import stringify from 'fast-json-stable-stringify'
+import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
 export function memoizeStaleIfErrorWithAsyncCache<
   CacheValue
@@ -9,7 +9,7 @@ export function memoizeStaleIfErrorWithAsyncCache<
   {
     cache
   , name
-  , createKey: createKey = args => stringify(args)
+  , createKey = defaultCreateKey
   }: {
     cache: IStaleIfErrorAsyncCache<CacheValue>
     name?: string

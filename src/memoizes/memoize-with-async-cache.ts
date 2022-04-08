@@ -1,6 +1,6 @@
 import { IAsyncCache } from '@src/types'
-import stringify from 'fast-json-stable-stringify'
 import { isntUndefined } from '@blackglory/prelude'
+import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
 export function memoizeWithAsyncCache<
   CacheValue
@@ -10,7 +10,7 @@ export function memoizeWithAsyncCache<
   {
     cache
   , name
-  , createKey = args => stringify(args)
+  , createKey = defaultCreateKey
   }: {
     cache: IAsyncCache<CacheValue>
     name?: string

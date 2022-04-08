@@ -1,7 +1,7 @@
 import { IStaleWhileRevalidateAsyncCache } from '@src/types'
 import { isntUndefined } from '@blackglory/prelude'
-import stringify from 'fast-json-stable-stringify'
 import { pass } from '@blackglory/prelude'
+import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
 export function memoizeStaleWhileRevalidateWithAsyncCache<
   CacheValue
@@ -11,7 +11,7 @@ export function memoizeStaleWhileRevalidateWithAsyncCache<
   {
     cache
   , name
-  , createKey = args => stringify(args)
+  , createKey = defaultCreateKey
   }: {
     cache: IStaleWhileRevalidateAsyncCache<CacheValue>
     name?: string

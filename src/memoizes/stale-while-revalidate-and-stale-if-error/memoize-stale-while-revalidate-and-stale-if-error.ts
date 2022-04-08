@@ -1,6 +1,6 @@
 import { IStaleWhileRevalidateAndStaleIfErrorCache, State } from '@src/types'
-import stringify from 'fast-json-stable-stringify'
 import { pass } from '@blackglory/prelude'
+import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
 export function memoizeStaleWhileRevalidateAndStaleIfError<
   CacheValue
@@ -10,7 +10,7 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
   {
     cache
   , name
-  , createKey: createKey = stringify
+  , createKey = defaultCreateKey
   }: {
     cache: IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
     name?: string
