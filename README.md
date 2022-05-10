@@ -33,13 +33,86 @@ enum State {
 
 interface ICache<T> {
   set(key: string, value: T): void
-  get(key: string): T | undefined
+  get(key: string): [State.Miss]
+                  | [State.Hit, T]
 }
 
 interface IAsyncCache<T> {
   set(key: string, value: T): Promise<void>
-  get(key: string): Promise<T | undefined>
+  get(key: string): Promise<
+                    | [State.Miss]
+                    | [State.Hit, T]
+                    >
 }
+
+interface IStaleWhileRevalidateCache<T> {
+  set(key: string, value: T): void
+  get(key: string): [State.Miss]
+                  | [
+                    | State.Hit
+                    | State.StaleWhileRevalidate
+                    , T
+                    ]
+}
+
+interface IStaleWhileRevalidateAsyncCache<T> {
+  set(key: string, value: T): Promise<void>
+  get(key: string): Promise<
+                    | [State.Miss]
+                    | [
+                      | State.Hit
+                      | State.StaleWhileRevalidate
+                      , T
+                      ]
+                    >
+}
+
+interface IStaleIfErrorCache<T> {
+  set(key: string, value: T): void
+  get(key: string): [State.Miss]
+                  | [
+                    | State.Hit
+                    | State.StaleIfError
+                    , T
+                    ]
+}
+
+interface IStaleIfErrorAsyncCache<T> {
+  set(key: string, value: T): Promise<void>
+  get(key: string): Promise<
+                    | [State.Miss]
+                    | [
+                      | State.Hit
+                      | State.StaleIfError
+                      , T
+                      ]
+                    >
+}
+
+interface IStaleWhileRevalidateAndStaleIfErrorCache<T> {
+  set(key: string, value: T): void
+  get(key: string): [State.Miss]
+                  | [
+                    | State.Hit
+                    | State.StaleWhileRevalidate
+                    | State.StaleIfError
+                    , T
+                    ]
+}
+
+interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
+  set(key: string, value: T): Promise<void>
+  get(key: string): Promise<
+                    | [State.Miss]
+                    | [
+                      | State.Hit
+                      | State.StaleWhileRevalidate
+                      | State.StaleIfError
+                      , T
+                      ]
+                    >
+}
+
 ```
 
 ### memoize
@@ -86,18 +159,7 @@ function memoizeWithAsyncCache<CacheValue, Result extends CacheValue, Args exten
 ): (...args: Args) => Promise<Result>
 ```
 
-### stale-while-revalidate
-```ts
-interface IStaleWhileRevalidateCache<T> extends ICache<T> {
-  isStaleWhileRevalidate(key: string): boolean
-}
-
-interface IStaleWhileRevalidateAsyncCache<T> extends IAsyncCache<T> {
-  isStaleWhileRevalidate(key: string): Promise<boolean>
-}
-```
-
-#### memoizeStaleWhileRevalidate
+### memoizeStaleWhileRevalidate
 ```ts
 function memoizeStaleWhileRevalidate<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
@@ -109,7 +171,7 @@ function memoizeStaleWhileRevalidate<CacheValue, Result extends CacheValue, Args
 ): (...args: Args) => Promise<Result>
 ```
 
-#### memoizeStaleWhileRevalidateWithAsyncCache
+### memoizeStaleWhileRevalidateWithAsyncCache
 ```ts
 function memoizeStaleWhileRevalidateWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
@@ -121,24 +183,7 @@ function memoizeStaleWhileRevalidateWithAsyncCache<CacheValue, Result extends Ca
 ): (...args: Args) => Promise<Result>
 ```
 
-### stale-if-error
-```ts
-interface IStaleIfErrorCache<T> {
-  set(key: string, value: T): void
-  get(key: string): [State.Miss, undefined]
-                  | [State.Hit | State.StaleIfError, T]
-}
-
-interface IStaleIfErrorAsyncCache<T> {
-  set(key: string, value: T): Promise<void>
-  get(key: string): Promise<
-                    | [State.Miss, undefined]
-                    | [State.Hit | State.StaleIfError, T]
-                    >
-}
-```
-
-#### memoizeStaleIfError
+### memoizeStaleIfError
 ```ts
 function memoizeStaleIfError<CacheValue, Resulte extends CacheValue, Args extends any[]>(
   options: {
@@ -150,7 +195,7 @@ function memoizeStaleIfError<CacheValue, Resulte extends CacheValue, Args extend
 ): (...args: Args) => Promise<Result> {
 ```
 
-#### memoizeStaleIfErrorWithAsyncCache
+### memoizeStaleIfErrorWithAsyncCache
 ```ts
 function memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
@@ -162,24 +207,7 @@ function memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue
 ): (...args: Args) => Promise<Result>
 ```
 
-### stale-while-revalidate & stale-if-error
-```ts
-interface IStaleWhileRevalidateAndStaleIfErrorCache<T> {
-  set(key: string, value: T): void
-  get(key: string): [State.Miss, undefined]
-                  | [State.Hit | State.StaleWhileRevalidate | State.StaleIfError, T]
-}
-
-interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
-  set(key: string, value: T): Promise<void>
-  get(key: string): Promise<
-                    | [State.Miss, undefined]
-                    | [State.Hit | State.StaleWhileRevalidate | State.StaleIfError, T]
-                    >
-}
-```
-
-#### memoizeStaleWhileRevalidateAndStaleIfError
+### memoizeStaleWhileRevalidateAndStaleIfError
 ```ts
 function memoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
@@ -191,7 +219,7 @@ function memoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Result extends C
 ): (...args: Args) => Promise<Result>
 ```
 
-#### memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache
+### memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache
 ```ts
 function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {

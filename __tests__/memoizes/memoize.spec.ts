@@ -3,16 +3,7 @@ import { Cache } from '@test/utils'
 import { getError } from 'return-style'
 import '@blackglory/jest-matchers'
 
-describe(`
-  memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
-    options: {
-      cache: ICache<CacheValue>
-      createKey?: (args: Args) => string
-      executionTimeThreshold?: number
-    }
-  , fn: (...args: Args) => Result
-  ): (...args: Args) => Result
-`, () => {
+describe('memoize', () => {
   it('caches the result', () => {
     const fn = jest.fn((text: string) => text)
     const cache = new Cache()

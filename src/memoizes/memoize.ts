@@ -1,5 +1,4 @@
-import { ICache } from '@src/types'
-import { isntUndefined } from '@blackglory/prelude'
+import { ICache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
 export function memoize<
@@ -29,23 +28,25 @@ export function memoize<
 ): (...args: Args) => Result {
   return function (this: unknown, ...args: Args): Result {
     const key = createKey(args, name)
-    const value = cache.get(key)
-    if (isntUndefined(value)) return value as any as Result
-
-    const startTime = Date.now()
-    const result = fn.apply(this, args)
-    if (isSlowExecution()) {
-      cache.set(key, result)
-    }
-
-    return result
-
-    function isSlowExecution(): boolean {
-      return getElapsed() >= executionTimeThreshold
-
-      function getElapsed(): number {
-        return Date.now() - startTime
+    const [state, value] = cache.get(key)
+    if (state === State.Hit) {
+      return value as Result
+    } else {
+      const startTime = Date.now()
+      const result = fn.apply(this, args)
+      if (isSlowExecution(startTime)) {
+        cache.set(key, result)
       }
+
+      return result
+    }
+  }
+
+  function isSlowExecution(startTime: number): boolean {
+    return getElapsed() >= executionTimeThreshold
+
+    function getElapsed(): number {
+      return Date.now() - startTime
     }
   }
 }

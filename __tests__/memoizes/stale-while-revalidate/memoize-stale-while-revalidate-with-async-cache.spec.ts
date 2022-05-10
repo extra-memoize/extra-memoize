@@ -5,15 +5,7 @@ import { State } from '@src/types'
 import { delay } from 'extra-promise'
 import '@blackglory/jest-matchers'
 
-describe(`
-  memoizeStaleWhileRevalidateWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
-    options: {
-      cache: ISWRAsyncCache<CacheValue>
-      createKey?: (args: Args) => string
-    }
-  , fn: (...args: Args) => PromiseLike<Result>
-  ): (...args: Args) => Promise<Result>
-`, () => {
+describe('memoizeStaleWhileRevalidateWithAsyncCache', () => {
   it('caches the result', async () => {
     const fn = jest.fn(async (text: string) => {
       await delay(100)

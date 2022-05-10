@@ -1,5 +1,4 @@
-import { ICache } from '@src/types'
-import { isntUndefined } from '@blackglory/prelude'
+import { ICache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
 export function memoizeAsync<
@@ -22,11 +21,13 @@ export function memoizeAsync<
 
   return async function (this: unknown, ...args: Args): Promise<Result> {
     const key = createKey(args, name)
-    const value = cache.get(key)
-    if (isntUndefined(value)) return value as any as Result
-
-    if (pendings.has(key)) return pendings.get(key)!
-    return await refresh.call(this, key, args)
+    const [state, value] = cache.get(key)
+    if (state === State.Hit) {
+      return value as Result
+    } else {
+      if (pendings.has(key)) return pendings.get(key)!
+      return await refresh.call(this, key, args)
+    }
   }
 
   async function refresh(this: unknown, key: string, args: Args): Promise<Result> {

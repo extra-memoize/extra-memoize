@@ -4,15 +4,7 @@ import { delay } from 'extra-promise'
 import { Cache } from '@test/utils'
 import '@blackglory/jest-matchers'
 
-describe(`
-  memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
-    options: {
-      cache: ICache<CacheValue>
-      createKey?: (args: Args) => string
-    }
-  , fn: (...args: Args) => PromiseLike<Result>
-  ): (...args: Args) => Promise<Result>
-`, () => {
+describe('memoizeAsync', () => {
   it('caches the result', async () => {
     const fn = jest.fn(async (text: string) => {
       await delay(100)

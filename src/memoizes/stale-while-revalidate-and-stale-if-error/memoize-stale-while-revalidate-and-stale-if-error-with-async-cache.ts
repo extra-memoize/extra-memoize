@@ -24,26 +24,26 @@ export function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
-      return value! as any as Result
+      return value as Result
     } else if (state === State.StaleWhileRevalidate) {
       queueMicrotask(async () => {
         if (!pendings.has(key)) {
           refresh.call(this, key, args).catch(pass)
         }
       })
-      return value! as any as Result
+      return value as Result
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
           return await pendings.get(key)!
         } catch {
-          return value! as any as Result
+          return value as Result
         }
       } else {
         try {
           return await refresh.call(this, key, args)
         } catch {
-          return value! as any as Result
+          return value as Result
         }
       }
     } else {

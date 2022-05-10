@@ -1,5 +1,4 @@
-import { IStaleWhileRevalidateAsyncCache } from '@src/types'
-import { isntUndefined } from '@blackglory/prelude'
+import { IStaleWhileRevalidateAsyncCache, State } from '@src/types'
 import { pass } from '@blackglory/prelude'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
@@ -23,15 +22,16 @@ export function memoizeStaleWhileRevalidateWithAsyncCache<
 
   return async function (this: unknown, ...args: Args): Promise<Result> {
     const key = createKey(args, name)
-    const value = await cache.get(key)
-    if (isntUndefined(value)) {
+    const [state, value] = await cache.get(key)
+    if (state === State.Hit) {
+      return value as Result
+    } else if (state === State.StaleWhileRevalidate) {
       queueMicrotask(async () => {
-        // 注意, 这两个条件的位置不可调换
-        if (await cache.isStaleWhileRevalidate(key) && !pendings.has(key)) {
+        if (!pendings.has(key)) {
           refresh.call(this, key, args).catch(pass)
         }
       })
-      return value as any as Result
+      return value as Result
     } else {
       if (pendings.has(key)) return await pendings.get(key)!
       return await refresh.call(this, key, args)

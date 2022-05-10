@@ -5,15 +5,7 @@ import { getErrorPromise } from 'return-style'
 import { delay } from 'extra-promise'
 import '@blackglory/jest-matchers'
 
-describe(`
-  memoizeStaleIfError<CacheValue, Result extends CacheValue, Args extends any[]>(
-    options: {
-      cache: IStaleIfErrorCache<CacheValue>
-      createKey?: (args: Args) => string
-    }
-  , fn: (...args: Args) => PromiseLike<Result>
-  ): (...args: Args) => Promise<Result>
-`, () => {
+describe('memoizeStaleIfError', () => {
   it('caches the result', async () => {
     const fn = jest.fn(async (text: string) => {
       await delay(100)
