@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/extra-memoize/extra-memoize/compare/v0.6.0...v0.7.0) (2022-06-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* rewrite
+
+### Features
+
+* rewrite ([5d0f39a](https://github.com/extra-memoize/extra-memoize/commit/5d0f39a68c91e841f8d86c675b7f262a276e6a64))
+
 ## [0.6.0](https://github.com/extra-memoize/extra-memoize/compare/v0.5.0...v0.6.0) (2022-05-10)
 
 
