@@ -142,6 +142,14 @@ function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>
     cache: ICache<CacheValue>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
@@ -154,8 +162,16 @@ function memoizeWithAsyncCache<CacheValue, Result extends CacheValue, Args exten
     cache: IAsyncCache<CacheValue>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
   }
-, fn: (...args: Args) => Result | PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
@@ -163,23 +179,21 @@ function memoizeWithAsyncCache<CacheValue, Result extends CacheValue, Args exten
 ```ts
 function memoizeStaleWhileRevalidate<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: IStaleWhileRevalidateCache<CacheValue>
+    cache:
+    | IStaleWhileRevalidateCache<CacheValue>
+    | IStaleWhileRevalidateAsyncCache<CacheValue>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
-  }
-, fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<Result>
-```
 
-### memoizeStaleWhileRevalidateWithAsyncCache
-```ts
-function memoizeStaleWhileRevalidateWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
-  options: {
-    cache: IStaleWhileRevalidateAsyncCache<CacheValue>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
   }
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
@@ -190,9 +204,37 @@ function memoizeStaleIfError<CacheValue, Resulte extends CacheValue, Args extend
     cache: IStaleIfErrorCache<CacheValue>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
+  }
+, fn: (...args: Args) => Result
+): (...args: Args) => Result
+```
+
+### memoizeAsyncStaleIfError
+```ts
+function memoizeAsyncStaleIfError<CacheValue, Resulte extends CacheValue, Args extends any[]>(
+  options: {
+    cache: IStaleIfErrorCache<CacheValue>
+    name?: string
+    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
   }
 , fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<Result> {
+): (...args: Args) => Promise<Result>
 ```
 
 ### memoizeStaleIfErrorWithAsyncCache
@@ -202,8 +244,16 @@ function memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue
     cache: IStaleIfErrorAsyncCache<CacheValue>
     name: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
   }
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 ```
 
@@ -211,22 +261,20 @@ function memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue
 ```ts
 function memoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Result extends CacheValue, Args extends any[]>(
   options: {
-    cache: IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
+    cache:
+    | IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
+    | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
-  }
-, fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<Result>
-```
 
-### memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache
-```ts
-function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
-  options: {
-    cache: IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
   }
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 ```

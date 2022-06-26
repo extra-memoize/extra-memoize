@@ -1,8 +1,7 @@
-import { IStaleWhileRevalidateAndStaleIfErrorAsyncCache, State } from '@src/types'
-import { pass } from '@blackglory/prelude'
+import { IStaleIfErrorCache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
-export function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<
+export function memoizeAsyncStaleIfError<
   CacheValue
 , Result extends CacheValue
 , Args extends any[]
@@ -11,10 +10,19 @@ export function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<
     cache
   , name
   , createKey = defaultCreateKey
+  , executionTimeThreshold = 0
   }: {
-    cache: IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
+    cache: IStaleIfErrorCache<CacheValue>
     name?: string
     createKey?: (args: Args, name?: string) => string
+
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {
@@ -22,15 +30,8 @@ export function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<
 
   return async function (this: unknown, ...args: Args): Promise<Result> {
     const key = createKey(args, name)
-    const [state, value] = await cache.get(key)
+    const [state, value] = cache.get(key)
     if (state === State.Hit) {
-      return value as Result
-    } else if (state === State.StaleWhileRevalidate) {
-      queueMicrotask(async () => {
-        if (!pendings.has(key)) {
-          refresh.call(this, key, args).catch(pass)
-        }
-      })
       return value as Result
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
@@ -53,14 +54,27 @@ export function memoizeStaleWhileRevalidateAndStaleIfErrorWithAsyncCache<
   }
 
   async function refresh(this: unknown, key: string, args: Args): Promise<Result> {
+    const startTime = Date.now()
     const promise = Promise.resolve(fn.apply(this, args))
     pendings.set(key, promise)
+
     try {
-      const value = await promise
-      await cache.set(key, value)
-      return value
+      const result = await promise
+      if (isSlowExecution(startTime)) {
+        cache.set(key, result)
+      }
+
+      return result
     } finally {
       pendings.delete(key)
+    }
+  }
+
+  function isSlowExecution(startTime: number): boolean {
+    return getElapsed() >= executionTimeThreshold
+
+    function getElapsed(): number {
+      return Date.now() - startTime
     }
   }
 }

@@ -17,7 +17,7 @@ describe('memoize', () => {
     expect(fn).toBeCalledTimes(1)
   })
 
-  test('fn throw errors', () => {
+  test('fn throws errors', () => {
     const fn = jest.fn((text: string) => {
       throw new Error('error')
     })

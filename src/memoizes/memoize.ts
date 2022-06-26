@@ -32,14 +32,18 @@ export function memoize<
     if (state === State.Hit) {
       return value as Result
     } else {
-      const startTime = Date.now()
-      const result = fn.apply(this, args)
-      if (isSlowExecution(startTime)) {
-        cache.set(key, result)
-      }
-
-      return result
+      return refresh.call(this, key, args)
     }
+  }
+
+  function refresh(this: unknown, key: string, args: Args): Result {
+    const startTime = Date.now()
+    const result = fn.apply(this, args)
+    if (isSlowExecution(startTime)) {
+      cache.set(key, result)
+    }
+
+    return result
   }
 
   function isSlowExecution(startTime: number): boolean {

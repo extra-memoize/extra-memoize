@@ -22,7 +22,7 @@ describe('memoizeWithAsyncCache', () => {
       expect(proResult2).toBe('foo')
     })
 
-    test('fn throw errors', async () => {
+    test('fn throws errors', async () => {
       const fn = jest.fn((text: string) => {
         throw new Error('error')
       })
@@ -59,7 +59,7 @@ describe('memoizeWithAsyncCache', () => {
       expect(fn).toBeCalledTimes(1)
     })
 
-    test('fn throw errors', async () => {
+    test('fn throws errors', async () => {
       const fn = jest.fn(async (text: string) => {
         await delay(100)
         throw new Error('error')
@@ -118,6 +118,56 @@ describe('memoizeWithAsyncCache', () => {
         expect(result2).toBePromise()
         expect(err2).toBeInstanceOf(Error)
         expect(fn).toBeCalledTimes(1)
+      })
+    })
+  })
+
+  describe('executionTimeThreshold', () => {
+    beforeEach(() => {
+      jest.useFakeTimers('modern')
+    })
+
+    afterEach(() => {
+      jest.runOnlyPendingTimers()
+      jest.useRealTimers()
+    })
+
+    describe('executionTime >= executionTimeThreshold', () => {
+      it('caches the result', async () => {
+        const fn = jest.fn((text: string) => {
+          jest.setSystemTime(jest.getRealSystemTime() + 200)
+          return text
+        })
+        const cache = new AsyncCache()
+
+        const memoizedFn = memoizeWithAsyncCache({
+          cache
+        , executionTimeThreshold: 200
+        }, fn)
+        const result1 = await memoizedFn('foo')
+        const result2 = await memoizedFn('foo')
+
+        expect(result1).toBe('foo')
+        expect(result2).toBe('foo')
+        expect(fn).toBeCalledTimes(1)
+      })
+    })
+
+    describe('executionTime < executionTimeThreshold', () => {
+      it('does not cache the result', async () => {
+        const fn = jest.fn((text: string) => text)
+        const cache = new AsyncCache()
+
+        const memoizedFn = memoizeWithAsyncCache({
+          cache
+        , executionTimeThreshold: 200
+        }, fn)
+        const result1 = await memoizedFn('foo')
+        const result2 = await memoizedFn('foo')
+
+        expect(result1).toBe('foo')
+        expect(result2).toBe('foo')
+        expect(fn).toBeCalledTimes(2)
       })
     })
   })

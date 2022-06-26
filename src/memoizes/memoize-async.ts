@@ -10,10 +10,19 @@ export function memoizeAsync<
     cache
   , name
   , createKey = defaultCreateKey
+  , executionTimeThreshold = 0
   }: {
     cache: ICache<CacheValue>
     name?: string
     createKey?: (args: Args, name?: string) => string
+
+    /**
+     * Used to judge whether a function execution is too slow.
+     * Only when the excution time of function is
+     * greater than or equal to the value (in milliseconds),
+     * the return value of the function will be cached.
+     */
+    executionTimeThreshold?: number
   }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result> {
@@ -31,14 +40,26 @@ export function memoizeAsync<
   }
 
   async function refresh(this: unknown, key: string, args: Args): Promise<Result> {
+    const startTime = Date.now()
     const pending = Promise.resolve(fn.apply(this, args))
     pendings.set(key, pending)
     try {
-      const value = await pending
-      cache.set(key, value)
-      return value
+      const result = await pending
+      if (isSlowExecution(startTime)) {
+        cache.set(key, result)
+      }
+
+      return result
     } finally {
       pendings.delete(key)
+    }
+  }
+
+  function isSlowExecution(startTime: number): boolean {
+    return getElapsed() >= executionTimeThreshold
+
+    function getElapsed(): number {
+      return Date.now() - startTime
     }
   }
 }

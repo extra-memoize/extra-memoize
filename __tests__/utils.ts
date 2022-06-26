@@ -49,13 +49,20 @@ export class AsyncCache<T> implements IAsyncCache<T> {
 export class SWRCache<T> implements IStaleWhileRevalidateCache<T> {
   private map = new Map()
 
-  constructor(private getState: (key: string) => State.StaleWhileRevalidate | State.Hit) {}
+  constructor(
+    private getState: (key: string) =>
+    | State.StaleWhileRevalidate
+    | State.Hit
+  ) {}
 
   set(key: string, value: T): void {
     this.map.set(key, value)
   }
 
-  get(key: string): [State.Miss] | [State.Hit | State.StaleWhileRevalidate, T] {
+  get(key: string):
+  | [State.Miss]
+  | [State.Hit | State.StaleWhileRevalidate, T]
+  {
     if (this.map.has(key)) {
       return [this.getState(key), this.map.get(key)]
     } else {
@@ -71,13 +78,20 @@ export class SWRCache<T> implements IStaleWhileRevalidateCache<T> {
 export class SWRAsyncCache<T> implements IStaleWhileRevalidateAsyncCache<T> {
   private map = new Map()
 
-  constructor(private getState: (key: string) => State.StaleWhileRevalidate | State.Hit) {}
+  constructor(
+    private getState: (key: string) =>
+    | State.StaleWhileRevalidate
+    | State.Hit
+  ) {}
 
   async set(key: string, value: T): Promise<void> {
     this.map.set(key, value)
   }
 
-  async get(key: string): Promise<[State.Miss] | [State.Hit | State.StaleWhileRevalidate, T]> {
+  async get(key: string): Promise<
+  | [State.Miss]
+  | [State.Hit | State.StaleWhileRevalidate, T]
+  > {
     if (this.map.has(key)) {
       return [this.getState(key), this.map.get(key)]
     } else {
@@ -93,9 +107,16 @@ export class SWRAsyncCache<T> implements IStaleWhileRevalidateAsyncCache<T> {
 export class SIECache<T> implements IStaleIfErrorCache<T> {
   private map = new Map()
 
-  constructor(private getState: (key: string) => State.Hit | State.StaleIfError) {}
+  constructor(
+    private getState: (key: string) =>
+    | State.Hit
+    | State.StaleIfError
+  ) {}
 
-  get(key: string): [State.Miss] | [State.Hit | State.StaleIfError, T] {
+  get(key: string):
+  | [State.Miss]
+  | [State.Hit | State.StaleIfError, T]
+  {
     if (this.map.has(key)) {
       const value = this.map.get(key)!
       return [this.getState(key), value]
@@ -112,7 +133,11 @@ export class SIECache<T> implements IStaleIfErrorCache<T> {
 export class SIEAsyncCache<T> implements IStaleIfErrorAsyncCache<T> {
   private map = new Map()
 
-  constructor(private getState: (key: string) => State.Hit | State.StaleIfError) {}
+  constructor(
+    private getState: (key: string) =>
+    | State.Hit
+    | State.StaleIfError
+  ) {}
 
   async get(key: string): Promise<
   | [State.Miss]
@@ -134,9 +159,17 @@ export class SIEAsyncCache<T> implements IStaleIfErrorAsyncCache<T> {
 export class SWRAndSIECache<T> implements IStaleWhileRevalidateAndStaleIfErrorCache<T> {
   private map = new Map()
 
-  constructor(private getCacheState: (key: string) => State.StaleWhileRevalidate | State.StaleIfError | State.Hit) {}
+  constructor(
+    private getCacheState: (key: string) =>
+    | State.StaleWhileRevalidate
+    | State.StaleIfError
+    | State.Hit
+  ) {}
 
-  get(key: string): [State.Miss] | [State.Hit | State.StaleWhileRevalidate | State.StaleIfError, T] {
+  get(key: string):
+  | [State.Miss]
+  | [State.Hit | State.StaleWhileRevalidate | State.StaleIfError, T]
+  {
     if (this.map.has(key)) {
       const value = this.map.get(key)!
       return [this.getCacheState(key), value]
@@ -153,9 +186,17 @@ export class SWRAndSIECache<T> implements IStaleWhileRevalidateAndStaleIfErrorCa
 export class SWRAndSIEAsyncCache<T> implements IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
   private map = new Map()
 
-  constructor(private getCacheState: (key: string) => State.StaleWhileRevalidate | State.StaleIfError | State.Hit) {}
+  constructor(
+    private getCacheState: (key: string) =>
+    | State.StaleWhileRevalidate
+    | State.StaleIfError
+    | State.Hit
+  ) {}
 
-  async get(key: string): Promise<[State.Miss] | [State.Hit | State.StaleWhileRevalidate | State.StaleIfError, T]> {
+  async get(key: string): Promise<
+  | [State.Miss]
+  | [State.Hit | State.StaleWhileRevalidate | State.StaleIfError, T]
+  > {
     if (this.map.has(key)) {
       const value = this.map.get(key)!
       return [this.getCacheState(key), value]
