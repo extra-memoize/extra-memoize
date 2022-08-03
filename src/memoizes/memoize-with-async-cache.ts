@@ -3,7 +3,7 @@ import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { Awaitable } from '@blackglory/prelude'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
-type VerboseResult<T> = [T, State.Hit | State.Miss]
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.Reuse]
 
 interface IMemoizeWithAsyncCacheOptions<Result, Args extends any[]> {
   cache: IAsyncCache<Result>
@@ -58,9 +58,14 @@ export function memoizeWithAsyncCache<Result, Args extends any[]>(
       return createReturnValue(value, state, verbose)
     } else {
       if (pendings.has(key)) {
-        return createReturnValue(await pendings.get(key)!, state, verbose)
+        return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
+      } else {
+        return createReturnValue(
+          await refresh.call(this, key, args)
+        , state
+        , verbose
+        )
       }
-      return createReturnValue(await refresh.call(this, key, args), state, verbose)
     }
   }
 

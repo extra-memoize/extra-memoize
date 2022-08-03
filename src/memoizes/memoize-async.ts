@@ -2,7 +2,7 @@ import { ICache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
-type VerboseResult<T> = [T, State.Hit | State.Miss]
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.Reuse]
 
 interface IMemoizeAsyncOptions<Result, Args extends any[]> {
   cache: ICache<Result>
@@ -57,13 +57,14 @@ export function memoizeAsync<Result, Args extends any[]>(
       return createReturnValue(value, state, verbose)
     } else {
       if (pendings.has(key)) {
-        return createReturnValue(await pendings.get(key)!, state, verbose)
+        return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
+      } else {
+        return createReturnValue(
+          await refresh.call(this, key, args)
+        , state
+        , verbose
+        )
       }
-      return createReturnValue(
-        await refresh.call(this, key, args)
-      , state
-      , verbose
-      )
     }
   }
 

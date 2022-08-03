@@ -2,18 +2,19 @@ import { memoize } from '@memoizes/memoize'
 import { Cache } from '@test/utils'
 import { getError } from 'return-style'
 import '@blackglory/jest-matchers'
+import { State } from '@src/types'
 
 describe('memoize', () => {
   it('caches the result', () => {
     const fn = jest.fn((text: string) => text)
     const cache = new Cache()
 
-    const memoizedFn = memoize({ cache }, fn)
+    const memoizedFn = memoize({ cache, verbose: true }, fn)
     const result1 = memoizedFn('foo')
     const result2 = memoizedFn('foo')
 
-    expect(result1).toBe('foo')
-    expect(result2).toBe('foo')
+    expect(result1).toStrictEqual(['foo', State.Miss])
+    expect(result2).toStrictEqual(['foo', State.Hit])
     expect(fn).toBeCalledTimes(1)
   })
 

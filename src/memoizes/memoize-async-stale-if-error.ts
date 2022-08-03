@@ -2,7 +2,13 @@ import { IStaleIfErrorCache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
-type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
+type VerboseResult<T> = [
+  T
+, | State.Hit
+  | State.Miss
+  | State.StaleIfError
+  | State.Reuse
+]
 
 interface IMemoizeAsyncStaleIfError<Result, Args extends any[]> {
   cache: IStaleIfErrorCache<Result>
@@ -58,7 +64,7 @@ export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
-          return createReturnValue(await pendings.get(key)!, state, verbose)
+          return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
         } catch {
           return createReturnValue(value, state, verbose)
         }
@@ -75,9 +81,14 @@ export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
       }
     } else {
       if (pendings.has(key)) {
-        return createReturnValue(await pendings.get(key)!, state, verbose)
+        return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
+      } else {
+        return createReturnValue(
+          await refresh.call(this, key, args)
+        , state
+        , verbose
+        )
       }
-      return createReturnValue(await refresh.call(this, key, args), state, verbose)
     }
   }
 

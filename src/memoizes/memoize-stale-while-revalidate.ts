@@ -7,7 +7,10 @@ import { pass, Awaitable } from '@blackglory/prelude'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
-type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleWhileRevalidate]
+type VerboseResult<T> = [
+  T
+, State.Hit | State.Miss | State.StaleWhileRevalidate | State.Reuse
+]
 
 interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
   cache:
@@ -71,7 +74,7 @@ export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
       return createReturnValue(value, state, verbose)
     } else {
       if (pendings.has(key)) {
-        return createReturnValue(await pendings.get(key)!, state, verbose)
+        return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
       }
       return createReturnValue(await refresh.call(this, key, args), state, verbose)
     }

@@ -9,7 +9,11 @@ import { createReturnValue } from '@memoizes/utils/create-return-value'
 
 type VerboseResult<T> = [
   T
-, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError
+, | State.Hit
+  | State.Miss
+  | State.StaleWhileRevalidate
+  | State.StaleIfError
+  | State.Reuse
 ]
 
 interface IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]> {
@@ -95,7 +99,7 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
-          return createReturnValue(await pendings.get(key)!, state, verbose)
+          return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
         } catch {
           return createReturnValue(value, state, verbose)
         }
@@ -112,10 +116,14 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
       }
     } else {
       if (pendings.has(key)) {
-        return createReturnValue(await pendings.get(key)!, state, verbose)
+        return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
+      } else {
+        return createReturnValue(
+          await refresh.call(this, key, args)
+        , state
+        , verbose
+        )
       }
-
-      return createReturnValue(await refresh.call(this, key, args), state, verbose)
     }
   }
 

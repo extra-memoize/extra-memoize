@@ -1,6 +1,7 @@
 export enum State {
   Miss = 'miss'
 , Hit = 'hit'
+, Reuse = 'reuse'
 , StaleWhileRevalidate = 'stale-while-revalidate'
 , StaleIfError = 'state-if-error'
 }
