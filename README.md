@@ -112,7 +112,6 @@ interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
                       ]
                     >
 }
-
 ```
 
 ### memoize
