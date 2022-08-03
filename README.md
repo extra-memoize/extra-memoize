@@ -27,6 +27,7 @@ const memoized = memoize({ cache }, fn)
 enum State {
   Miss = 'miss'
 , Hit = 'hit'
+, Reuse = 'reuse'
 , StaleWhileRevalidate = 'stale-while-revalidate'
 , StaleIfError = 'state-if-error'
 }
@@ -155,10 +156,10 @@ function memoize<Result, Args extends any[]>(
 
 ### memoizeAsync
 ```ts
-type VerboseResult<T> = [T, State.Hit | State.Miss]
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.Reuse]
 
 interface IMemoizeAsyncOptions<Result, Args extends any[]> {
-  cache: ICache<Result>
+  cache: ICache<Result> | IAsyncCache<Result>
   name?: string
   verbose?: boolean = false
 
@@ -176,64 +177,28 @@ interface IMemoizeAsyncOptions<Result, Args extends any[]> {
 
 function memoizeAsync<Result, Args extends any[]>(
   options: IMemoizeAsyncOptions<Result, Args> & { verbose: true }
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
 function memoizeAsync<Result, Args extends any[]>(
   options: IMemoizeAsyncOptions<Result, Args> & { verbose: false }
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 function memoizeAsync<Result, Args extends any[]>(
   options: Omit<IMemoizeAsyncOptions<Result, Args>, 'verbose'>
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 function memoizeAsync<Result, Args extends any[]>(
   options: IMemoizeAsyncOptions<Result, Args>
-, fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<Result | VerboseResult<Result>>
-```
-
-### memoizeWithAsyncCache
-```ts
-type VerboseResult<T> = [T, State.Hit | State.Miss]
-
-interface IMemoizeWithAsyncCacheOptions<Result, Args extends any[]> {
-  cache: IAsyncCache<Result>
-  name?: string
-  verbose?: boolean = false
-
-  // The default is fast-json-stable-stringify([args, name])
-  createKey?: (args: Args, name?: string) => string
-
-  /**
-   * Used to judge whether a function execution is too slow.
-   * Only when the excution time of function is
-   * greater than or equal to the value (in milliseconds),
-   * the return value of the function will be cached.
-   */
-  executionTimeThreshold?: number
-}
-
-function memoizeWithAsyncCache<Result, Args extends any[]>(
-  options: IMemoizeWithAsyncCacheOptions<Result, Args> & { verbose: true }
-, fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<VerboseResult<Result>>
-function memoizeWithAsyncCache<Result, Args extends any[]>(
-  options: IMemoizeWithAsyncCacheOptions<Result, Args> & { verbose: false }
-, fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<Result>
-function memoizeWithAsyncCache<Result, Args extends any[]>(
-  options: Omit<IMemoizeWithAsyncCacheOptions<Result, Args>, 'verbose'>
-, fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<Result>
-function memoizeWithAsyncCache<Result, Args extends any[]>(
-  options: IMemoizeWithAsyncCacheOptions<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
 
 ### memoizeStaleWhileRevalidate
 ```ts
-type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleWhileRevalidate]
+type VerboseResult<T> = [
+  T
+, State.Hit | State.Miss | State.Reuse | State.StaleWhileRevalidate
+]
 
 interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
   cache:
@@ -274,26 +239,6 @@ function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
 
 ### memoizeStaleIfError
 ```ts
-function memoizeStaleIfError<Result, Args extends any[]>(
-  options: {
-    cache: IStaleIfErrorCache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
-
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
-, fn: (...args: Args) => Result
-): (...args: Args) => Result
-```
-
-### memoizeAsyncStaleIfError
-```ts
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
 
 interface IMemoizeStaleIfErrorOptions<Result, Args extends any[]> {
@@ -331,12 +276,18 @@ function memoizeStaleIfError<Result, Args extends any[]>(
 ): (...args: Args) => Result | VerboseResult<Result>
 ```
 
-### memoizeStaleIfErrorWithAsyncCache
+### memoizeAsyncStaleIfError
 ```ts
-type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
+type VerboseResult<T> = [
+  T
+, | State.Hit
+  | State.Miss
+  | State.Reuse
+  | State.StaleIfError
+]
 
-interface IMemoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]> {
-  cache: IStaleIfErrorCache<Result> | IStaleIfErrorAsyncCache<Result>
+interface IMemoizeStaleIfErrorOptions<Result, Args extends any[]> {
+  cache: IStaleIfErrorCache<Result> | IStaleifErrorAsyncCache<Result>
   name?: string
   verbose?: boolean = false
 
@@ -352,20 +303,20 @@ interface IMemoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]> {
   executionTimeThreshold?: number
 }
 
-function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args> & { verbose: true }
-, fn: (...args: Args) => Awaitable<VerboseResult<Result>>
-): (...args: Args) => Promise<Result>
-function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args> & { verbose: false }
+function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: true }
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<VerboseResult<Result>>
+function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
-  options: Omit<IMemoizeStaleIfErrorWithAsyncCache<Result, Args>, 'verbose'>
+function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+  options: Omit<IMemoizeAsyncStaleIfError<Result, Args>, 'verbose'>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args>
+function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeAsyncStaleIfError<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
@@ -374,7 +325,11 @@ function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
 ```ts
 type VerboseResult<T> = [
   T
-, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError
+, | State.Hit
+  | State.Miss
+  | State.Reuse
+  | State.StaleWhileRevalidate
+  | State.StaleIfError
 ]
 
 interface IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]> {

@@ -7,8 +7,8 @@ type VerboseResult<T> = [
   T
 , | State.Hit
   | State.Miss
-  | State.StaleIfError
   | State.Reuse
+  | State.StaleIfError
 ]
 
 interface IMemoizeAsyncStaleIfError<Result, Args extends any[]> {

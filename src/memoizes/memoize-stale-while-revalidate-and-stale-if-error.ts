@@ -11,9 +11,9 @@ type VerboseResult<T> = [
   T
 , | State.Hit
   | State.Miss
+  | State.Reuse
   | State.StaleWhileRevalidate
   | State.StaleIfError
-  | State.Reuse
 ]
 
 interface IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]> {

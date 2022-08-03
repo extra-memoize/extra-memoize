@@ -9,7 +9,7 @@ import { createReturnValue } from '@memoizes/utils/create-return-value'
 
 type VerboseResult<T> = [
   T
-, State.Hit | State.Miss | State.StaleWhileRevalidate | State.Reuse
+, State.Hit | State.Miss | State.Reuse | State.StaleWhileRevalidate
 ]
 
 interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
