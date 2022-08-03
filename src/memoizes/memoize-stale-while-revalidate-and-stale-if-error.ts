@@ -5,7 +5,7 @@ import {
 } from '@src/types'
 import { pass, Awaitable } from '@blackglory/prelude'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
-import { createReturnValue } from '@memoizes/utils/create-return-value'
+import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
 
 type VerboseResult<T> = [
   T
@@ -81,48 +81,48 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
 ): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
-  return async function (this: unknown, ...args: Args): Promise<
-  | Result
-  | VerboseResult<Result>
-  > {
+  return async function(
+    this: unknown
+  , ...args: Args
+  ): Promise<Result | VerboseResult<Result>> {
+    const [value, state] = await memoizedFunction.apply(this, args)
+    return verbose ? [value, state] : value
+  }
+
+  async function memoizedFunction(
+    this: unknown
+  , ...args: Args
+  ): Promise<VerboseResult<Result>> {
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
-      return value
+      return createVerboseResult(value, state)
     } else if (state === State.StaleWhileRevalidate) {
       queueMicrotask(async () => {
         if (!pendings.has(key)) {
           refresh.call(this, key, args).catch(pass)
         }
       })
-      return createReturnValue(value, state, verbose)
+      return createVerboseResult(value, state)
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
-          return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
+          return createVerboseResult(await pendings.get(key)!, State.Reuse)
         } catch {
-          return createReturnValue(value, state, verbose)
+          return createVerboseResult(value, state)
         }
       } else {
         try {
-          return createReturnValue(
-            await refresh.call(this, key, args)
-          , state
-          , verbose
-          )
+          return createVerboseResult(await refresh.call(this, key, args), state)
         } catch {
-          return createReturnValue(value, state, verbose)
+          return createVerboseResult(value, state)
         }
       }
     } else {
       if (pendings.has(key)) {
-        return createReturnValue(await pendings.get(key)!, State.Reuse, verbose)
+        return createVerboseResult(await pendings.get(key)!, State.Reuse)
       } else {
-        return createReturnValue(
-          await refresh.call(this, key, args)
-        , state
-        , verbose
-        )
+        return createVerboseResult(await refresh.call(this, key, args), state)
       }
     }
   }

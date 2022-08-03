@@ -1,6 +1,6 @@
 import { ICache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
-import { createReturnValue } from '@memoizes/utils/create-return-value'
+import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
 
 type VerboseResult<T> = [T, State.Hit | State.Miss]
 
@@ -46,12 +46,20 @@ export function memoize<Result, Args extends any[]>(
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result | VerboseResult<Result> {
   return function (this: unknown, ...args: Args): Result | VerboseResult<Result> {
+    const [value, state] = memoizedFunction.apply(this, args)
+    return verbose ? [value, state] : value
+  }
+  
+  function memoizedFunction(
+    this: unknown
+  , ...args: Args
+  ): VerboseResult<Result> {
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {
-      return createReturnValue(value, state, verbose)
+      return createVerboseResult(value, state)
     } else {
-      return createReturnValue(refresh.call(this, key, args), state, verbose)
+      return createVerboseResult(refresh.call(this, key, args), state)
     }
   }
 
