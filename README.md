@@ -116,84 +116,160 @@ interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
 
 ### memoize
 ```ts
-export function memoize<Result, Args extends any[]>(
-  options: {
-    cache: ICache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args, name)
+type VerboseResult<T> = [T, State.Hit | State.Miss]
 
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
+interface IMemoizeOptions<Result, Args extends any[]> {
+  cache: ICache<Result>
+  name?: string
+  verbose?: boolean = false
+
+  // The default is fast-json-stable-stringify(args, name)
+  createKey?: (args: Args, name?: string) => string
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number = 0
+}
+
+function memoize<Result, Args extends any[]>(
+  options: IMemoizeOptions<Result, Args> & { verbose: true }
+, fn: (...args: Args) => Result
+): (...args: Args) => VerboseResult<Result>
+function memoize<Result, Args extends any[]>(
+  options: IMemoizeOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
+function memoize<Result, Args extends any[]>(
+  options: Omit<IMemoizeOptions<Result, Args>, 'verbose'>
+, fn: (...args: Args) => Result
+): (...args: Args) => Result
+function memoize<Result, Args extends any[]>(
+  options: IMemoizeOptions<Result, Args>
+, fn: (...args: Args) => Result
+): (...args: Args) => Result | VerboseResult<Result>
 ```
 
 ### memoizeAsync
 ```ts
-function memoizeAsync<Result, Args extends any[]>(
-  options: {
-    cache: ICache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+type VerboseResult<T> = [T, State.Hit | State.Miss]
 
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
+interface IMemoizeAsyncOptions<Result, Args extends any[]> {
+  cache: ICache<Result>
+  name?: string
+  verbose?: boolean = false
+
+  // The default is fast-json-stable-stringify([args, name])
+  createKey?: (args: Args, name?: string) => string
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number
+}
+
+function memoizeAsync<Result, Args extends any[]>(
+  options: IMemoizeAsyncOptions<Result, Args> & { verbose: true }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<VerboseResult<Result>>
+function memoizeAsync<Result, Args extends any[]>(
+  options: IMemoizeAsyncOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => PromiseLike<Result>
 ): (...args: Args) => Promise<Result>
+function memoizeAsync<Result, Args extends any[]>(
+  options: Omit<IMemoizeAsyncOptions<Result, Args>, 'verbose'>
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
+function memoizeAsync<Result, Args extends any[]>(
+  options: IMemoizeAsyncOptions<Result, Args>
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
 
 ### memoizeWithAsyncCache
 ```ts
-function memoizeWithAsyncCache<Result, Args extends any[]>(
-  options: {
-    cache: IAsyncCache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+type VerboseResult<T> = [T, State.Hit | State.Miss]
 
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
+interface IMemoizeWithAsyncCacheOptions<Result, Args extends any[]> {
+  cache: IAsyncCache<Result>
+  name?: string
+  verbose?: boolean = false
+
+  // The default is fast-json-stable-stringify([args, name])
+  createKey?: (args: Args, name?: string) => string
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number
+}
+
+function memoizeWithAsyncCache<Result, Args extends any[]>(
+  options: IMemoizeWithAsyncCacheOptions<Result, Args> & { verbose: true }
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<VerboseResult<Result>>
+function memoizeWithAsyncCache<Result, Args extends any[]>(
+  options: IMemoizeWithAsyncCacheOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
+function memoizeWithAsyncCache<Result, Args extends any[]>(
+  options: Omit<IMemoizeWithAsyncCacheOptions<Result, Args>, 'verbose'>
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result>
+function memoizeWithAsyncCache<Result, Args extends any[]>(
+  options: IMemoizeWithAsyncCacheOptions<Result, Args>
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
 
 ### memoizeStaleWhileRevalidate
 ```ts
-function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: {
-    cache:
-    | IStaleWhileRevalidateCache<Result>
-    | IStaleWhileRevalidateAsyncCache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleWhileRevalidate]
 
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
+interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
+  cache:
+  | IStaleWhileRevalidateCache<Result>
+  | IStaleWhileRevalidateAsyncCache<Result>
+  name?: string
+  verbose?: boolean = false
+
+  // The default is fast-json-stable-stringify([args, name])
+  createKey?: (args: Args, name?: string) => string
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number
+}
+
+function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+  options: IMemoizeStalwWhileRevalidateOptions<Result, Args> & { verbose: true }
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<VerboseResult<Result>>
+function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+  options: IMemoizeStalwWhileRevalidateOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
+function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+  options: Omit<IMemoizeStalwWhileRevalidateOptions<Result, Args>, 'verbose'>
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result>
+function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+  options: IMemoizeStalwWhileRevalidateOptions<Result, Args>
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
 
 ### memoizeStaleIfError
@@ -218,62 +294,139 @@ function memoizeStaleIfError<Result, Args extends any[]>(
 
 ### memoizeAsyncStaleIfError
 ```ts
-function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: {
-    cache: IStaleIfErrorCache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
 
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
-, fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<Result>
+interface IMemoizeStaleIfErrorOptions<Result, Args extends any[]> {
+  cache: IStaleIfErrorCache<Result>
+  name?: string
+  verbose?: boolean = false
+
+  // The default is fast-json-stable-stringify([args, name])
+  createKey?: (args: Args, name?: string) => string
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number
+}
+
+function memoizeStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeStaleIfErrorOptions<Result, Args> & { verbose: true }
+, fn: (...args: Args) => Result
+): (...args: Args) => VerboseResult<Result>
+function memoizeStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeStaleIfErrorOptions<Result, Args> & { verbose: false }
+, fn: (...args: Args) => Result
+): (...args: Args) => Result
+function memoizeStaleIfError<Result, Args extends any[]>(
+  options: Omit<IMemoizeStaleIfErrorOptions<Result, Args>, 'verbose'>
+, fn: (...args: Args) => Result
+): (...args: Args) => Result
+function memoizeStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeStaleIfErrorOptions<Result, Args>
+, fn: (...args: Args) => Result
+): (...args: Args) => Result | VerboseResult<Result>
 ```
 
 ### memoizeStaleIfErrorWithAsyncCache
 ```ts
-function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
-  options: {
-    cache: IStaleIfErrorAsyncCache<Result>
-    name: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
 
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
+interface IMemoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]> {
+  cache: IStaleIfErrorCache<Result> | IStaleIfErrorAsyncCache<Result>
+  name?: string
+  verbose?: boolean = false
+
+  // The default is fast-json-stable-stringify([args, name])
+  createKey?: (args: Args, name?: string) => string
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number
+}
+
+function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+  options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args> & { verbose: true }
+, fn: (...args: Args) => Awaitable<VerboseResult<Result>>
+): (...args: Args) => Promise<Result>
+function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+  options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
+function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+  options: Omit<IMemoizeStaleIfErrorWithAsyncCache<Result, Args>, 'verbose'>
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result>
+function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
+  options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args>
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
 
 ### memoizeStaleWhileRevalidateAndStaleIfError
 ```ts
-function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
-  options: {
-    cache:
-    | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
-    | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
+type VerboseResult<T> = [
+  T
+, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError
+]
 
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
+interface IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]> {
+  cache:
+  | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
+  | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
+  name?: string
+  verbose?: boolean = false
+
+  // The default is fast-json-stable-stringify([args, name])
+  createKey?: (args: Args, name?: string) => string
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number
+}
+
+function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+>(
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+         & { verbose: true }
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<VerboseResult<Result>>
+function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+>(
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+         & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
+function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+>(
+  options: Omit<
+    IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+  , 'verbose'
+  >
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result>
+function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+>(
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
