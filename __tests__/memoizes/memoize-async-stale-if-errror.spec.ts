@@ -1,19 +1,19 @@
-import { memoizeStaleIfErrorWithAsyncCache } from '@memoizes/stale-if-error/memoize-stale-if-error-with-async-cache'
-import { SIEAsyncCache } from '@test/utils'
+import { memoizeAsyncStaleIfError } from '@memoizes/memoize-async-stale-if-error'
+import { SIECache } from '@test/utils'
 import { State } from '@src/types'
 import { getErrorPromise } from 'return-style'
 import { delay } from 'extra-promise'
 import '@blackglory/jest-matchers'
 
-describe('memoizeStaleIfErrorWithAsyncCache', () => {
+describe('memoizeAsyncStaleIfError', () => {
   it('caches the result', async () => {
     const fn = jest.fn(async (text: string) => {
       await delay(100)
       return text
     })
-    const cache = new SIEAsyncCache(() => State.Hit)
+    const cache = new SIECache(() => State.Hit)
 
-    const memoizedFn = memoizeStaleIfErrorWithAsyncCache({ cache }, fn)
+    const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
     const result1 = memoizedFn('foo')
     const proResult1 = await result1
     const result2 = memoizedFn('foo')
@@ -31,9 +31,9 @@ describe('memoizeStaleIfErrorWithAsyncCache', () => {
       await delay(100)
       throw new Error('error')
     })
-    const cache = new SIEAsyncCache(() => State.Hit)
+    const cache = new SIECache(() => State.Hit)
 
-    const memoizedFn = memoizeStaleIfErrorWithAsyncCache({ cache }, fn)
+    const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
     const result1 = memoizedFn('foo')
     const err1 = await getErrorPromise(result1)
     const result2 = memoizedFn('foo')
@@ -53,14 +53,14 @@ describe('memoizeStaleIfErrorWithAsyncCache', () => {
         await delay(100)
         return ++count
       })
-      const cache = new SIEAsyncCache(
+      const cache = new SIECache(
         jest.fn()
           .mockReturnValueOnce(State.Hit)
           .mockReturnValueOnce(State.StaleIfError)
           .mockReturnValue(State.Hit)
       )
 
-      const memoizedFn = memoizeStaleIfErrorWithAsyncCache({ cache }, fn)
+      const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
       const result1 = memoizedFn() // miss
       const proResult1 = await result1 // 1
       const result2 = memoizedFn() // hit
@@ -81,7 +81,7 @@ describe('memoizeStaleIfErrorWithAsyncCache', () => {
       expect(fn).toBeCalledTimes(2)
     })
 
-    describe('fn throw errors', () => {
+    describe('fn throws errors', () => {
       it('returns stale cache', async () => {
         let count = 0
         const fn = jest.fn()
@@ -97,14 +97,14 @@ describe('memoizeStaleIfErrorWithAsyncCache', () => {
             await delay(100)
             return ++count
           })
-        const cache = new SIEAsyncCache(
+        const cache = new SIECache(
           jest.fn()
             .mockReturnValueOnce(State.StaleIfError)
             .mockReturnValueOnce(State.StaleIfError)
             .mockReturnValue(State.Hit)
         )
 
-        const memoizedFn = memoizeStaleIfErrorWithAsyncCache({ cache }, fn)
+        const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
         const result1 = memoizedFn() // miss
         const proResult1 = await result1 // 1
         const result2 = memoizedFn() // stale, revalidate, error
@@ -133,9 +133,9 @@ describe('memoizeStaleIfErrorWithAsyncCache', () => {
         await delay(100)
         return text
       })
-      const cache = new SIEAsyncCache(() => State.Hit)
+      const cache = new SIECache(() => State.Hit)
 
-      const memoizedFn = memoizeStaleIfErrorWithAsyncCache({ cache }, fn)
+      const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
       const result1 = memoizedFn('foo')
       const proResult1 = await result1
       const result2 = memoizedFn('foo')
@@ -153,9 +153,9 @@ describe('memoizeStaleIfErrorWithAsyncCache', () => {
         await delay(100)
         throw new Error('error')
       })
-      const cache = new SIEAsyncCache(() => State.Hit)
+      const cache = new SIECache(() => State.Hit)
 
-      const memoizedFn = memoizeStaleIfErrorWithAsyncCache({ cache }, fn)
+      const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
       const result1 = memoizedFn('foo')
       const result2 = memoizedFn('foo')
       const err1 = await getErrorPromise(result1)
@@ -181,13 +181,13 @@ describe('memoizeStaleIfErrorWithAsyncCache', () => {
 
     describe('executionTime >= executionTimeThreshold', () => {
       it('caches the result', async () => {
-        const fn = jest.fn((text: string) => {
+        const fn = jest.fn(async (text: string) => {
           jest.setSystemTime(jest.getRealSystemTime() + 200)
           return text
         })
-        const cache = new SIEAsyncCache(() => State.Hit)
+        const cache = new SIECache(() => State.Hit)
 
-        const memoizedFn = memoizeStaleIfErrorWithAsyncCache({
+        const memoizedFn = memoizeAsyncStaleIfError({
           cache
         , executionTimeThreshold: 200
         }, fn)
@@ -202,10 +202,10 @@ describe('memoizeStaleIfErrorWithAsyncCache', () => {
 
     describe('executionTime < executionTimeThreshold', () => {
       it('does not cache the result', async () => {
-        const fn = jest.fn((text: string) => text)
-        const cache = new SIEAsyncCache(() => State.Hit)
+        const fn = jest.fn(async (text: string) => text)
+        const cache = new SIECache(() => State.Hit)
 
-        const memoizedFn = memoizeStaleIfErrorWithAsyncCache({
+        const memoizedFn = memoizeAsyncStaleIfError({
           cache
         , executionTimeThreshold: 200
         }, fn)

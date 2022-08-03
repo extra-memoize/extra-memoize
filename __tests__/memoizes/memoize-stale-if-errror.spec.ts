@@ -1,4 +1,4 @@
-import { memoizeStaleIfError } from '@memoizes/stale-if-error/memoize-stale-if-error'
+import { memoizeStaleIfError } from '@memoizes/memoize-stale-if-error'
 import { SIECache } from '@test/utils'
 import { State } from '@src/types'
 import { getError } from 'return-style'
