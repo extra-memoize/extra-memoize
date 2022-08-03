@@ -1,51 +1,87 @@
 import { IStaleIfErrorCache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
+import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+interface IMemoizeAsyncStaleIfError<Result, Args extends any[]> {
+  cache: IStaleIfErrorCache<Result>
+  name?: string
+  createKey?: (args: Args, name?: string) => string
+  verbose?: boolean
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number
+}
+
+export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: true }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<[Result, State.Hit | State.Miss | State.StaleIfError]>
+export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: false }
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
+export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+  options: Omit<IMemoizeAsyncStaleIfError<Result, Args>, 'verbose'>
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<Result>
+export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+  options: IMemoizeAsyncStaleIfError<Result, Args>
+, fn: (...args: Args) => PromiseLike<Result>
+): (...args: Args) => Promise<
+| Result
+| [Result, State.Hit | State.Miss | State.StaleIfError]
+>
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   {
     cache
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
-  }: {
-    cache: IStaleIfErrorCache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string
-
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
+  , verbose = false
+  }: IMemoizeAsyncStaleIfError<Result, Args>
 , fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<Result> {
+): (...args: Args) => Promise<
+| Result
+| [Result, State.Hit | State.Miss | State.StaleIfError]
+> {
   const pendings = new Map<string, Promise<Result>>()
 
-  return async function (this: unknown, ...args: Args): Promise<Result> {
+  return async function (this: unknown, ...args: Args): Promise<
+  | Result
+  | [Result, State.Hit | State.Miss | State.StaleIfError]
+  > {
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {
-      return value
+      return createReturnValue(value, state, verbose)
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
-          return await pendings.get(key)!
+          return createReturnValue(await pendings.get(key)!, state, verbose)
         } catch {
-          return value
+          return createReturnValue(value, state, verbose)
         }
       } else {
         try {
-          return await refresh.call(this, key, args)
+          return createReturnValue(
+            await refresh.call(this, key, args)
+          , state
+          , verbose
+          )
         } catch {
-          return value
+          return createReturnValue(value, state, verbose)
         }
       }
     } else {
-      if (pendings.has(key)) return await pendings.get(key)!
-      return await refresh.call(this, key, args)
+      if (pendings.has(key)) {
+        return createReturnValue(await pendings.get(key)!, state, verbose)
+      }
+      return createReturnValue(await refresh.call(this, key, args), state, verbose)
     }
   }
 

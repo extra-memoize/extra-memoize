@@ -5,7 +5,64 @@ import {
 } from '@src/types'
 import { pass, Awaitable } from '@blackglory/prelude'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
+import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+interface IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]> {
+  cache:
+  | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
+  | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
+  name?: string
+  createKey?: (args: Args, name?: string) => string
+  verbose?: boolean
+
+  /**
+   * Used to judge whether a function execution is too slow.
+   * Only when the excution time of function is
+   * greater than or equal to the value (in milliseconds),
+   * the return value of the function will be cached.
+   */
+  executionTimeThreshold?: number
+}
+
+export function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+>(
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+         & { verbose: true }
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<[
+  Result
+, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError
+]>
+export function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+>(
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+         & { verbose: false }
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result>
+export function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+>(
+  options: Omit<
+    IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+  , 'verbose'
+  >
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<Result>
+export function memoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+>(
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+, fn: (...args: Args) => Awaitable<Result>
+): (...args: Args) => Promise<
+| Result
+| [Result, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError]
+>
 export function memoizeStaleWhileRevalidateAndStaleIfError<
   Result
 , Args extends any[]
@@ -15,26 +72,22 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
-  }: {
-    cache:
-    | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
-    | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
-    name?: string
-    createKey?: (args: Args, name?: string) => string
-
-    /**
-     * Used to judge whether a function execution is too slow.
-     * Only when the excution time of function is
-     * greater than or equal to the value (in milliseconds),
-     * the return value of the function will be cached.
-     */
-    executionTimeThreshold?: number
-  }
+  , verbose = false
+  }: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<Result> {
+): (...args: Args) => Promise<
+| Result
+| [Result, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError]
+> {
   const pendings = new Map<string, Promise<Result>>()
 
-  return async function (this: unknown, ...args: Args): Promise<Result> {
+  return async function (this: unknown, ...args: Args): Promise<
+  | Result
+  | [
+      Result
+    , State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError
+    ]
+  > {
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
@@ -45,19 +98,23 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
           refresh.call(this, key, args).catch(pass)
         }
       })
-      return value
+      return createReturnValue(value, state, verbose)
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
-          return await pendings.get(key)!
+          return createReturnValue(await pendings.get(key)!, state, verbose)
         } catch {
-          return value
+          return createReturnValue(value, state, verbose)
         }
       } else {
         try {
-          return await refresh.call(this, key, args)
+          return createReturnValue(
+            await refresh.call(this, key, args)
+          , state
+          , verbose
+          )
         } catch {
-          return value
+          return createReturnValue(value, state, verbose)
         }
       }
     } else {
