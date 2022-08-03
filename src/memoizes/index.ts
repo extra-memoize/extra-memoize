@@ -1,6 +1,5 @@
 export * from './memoize'
 export * from './memoize-async'
-export * from './memoize-with-async-cache'
 export * from './memoize-stale-while-revalidate'
 export * from './memoize-stale-while-revalidate-and-stale-if-error'
 export * from './memoize-stale-if-error'
