@@ -1,6 +1,7 @@
-import { IStaleIfErrorCache, State } from '@src/types'
+import { IStaleIfErrorCache, IStaleIfErrorAsyncCache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
+import { Awaitable } from '@blackglory/prelude'
 
 type VerboseResult<T> = [
   T
@@ -11,7 +12,7 @@ type VerboseResult<T> = [
 ]
 
 interface IMemoizeAsyncStaleIfError<Result, Args extends any[]> {
-  cache: IStaleIfErrorCache<Result>
+  cache: IStaleIfErrorCache<Result> | IStaleIfErrorAsyncCache<Result>
   name?: string
   createKey?: (args: Args, name?: string) => string
   verbose?: boolean
@@ -27,19 +28,19 @@ interface IMemoizeAsyncStaleIfError<Result, Args extends any[]> {
 
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: true }
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: false }
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   options: Omit<IMemoizeAsyncStaleIfError<Result, Args>, 'verbose'>
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   options: IMemoizeAsyncStaleIfError<Result, Args>
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   {
@@ -49,7 +50,7 @@ export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   , executionTimeThreshold = 0
   , verbose = false
   }: IMemoizeAsyncStaleIfError<Result, Args>
-, fn: (...args: Args) => PromiseLike<Result>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
@@ -58,7 +59,7 @@ export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   | VerboseResult<Result>
   > {
     const key = createKey(args, name)
-    const [state, value] = cache.get(key)
+    const [state, value] = await cache.get(key)
     if (state === State.Hit) {
       return createReturnValue(value, state, verbose)
     } else if (state === State.StaleIfError) {
@@ -100,7 +101,7 @@ export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
     try {
       const result = await promise
       if (isSlowExecution(startTime)) {
-        cache.set(key, result)
+        await cache.set(key, result)
       }
 
       return result
