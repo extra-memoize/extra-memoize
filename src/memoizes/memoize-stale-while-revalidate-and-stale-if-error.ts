@@ -7,8 +7,7 @@ import { pass, Awaitable } from '@blackglory/prelude'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
 export function memoizeStaleWhileRevalidateAndStaleIfError<
-  CacheValue
-, Result extends CacheValue
+  Result
 , Args extends any[]
 >(
   {
@@ -18,8 +17,8 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
   , executionTimeThreshold = 0
   }: {
     cache:
-    | IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
-    | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
+    | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
+    | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string
 
@@ -39,26 +38,26 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
-      return value as Result
+      return value
     } else if (state === State.StaleWhileRevalidate) {
       queueMicrotask(async () => {
         if (!pendings.has(key)) {
           refresh.call(this, key, args).catch(pass)
         }
       })
-      return value as Result
+      return value
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
           return await pendings.get(key)!
         } catch {
-          return value as Result
+          return value
         }
       } else {
         try {
           return await refresh.call(this, key, args)
         } catch {
-          return value as Result
+          return value
         }
       }
     } else {

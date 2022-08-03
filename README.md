@@ -116,9 +116,9 @@ interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
 
 ### memoize
 ```ts
-export function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+export function memoize<Result, Args extends any[]>(
   options: {
-    cache: ICache<CacheValue>
+    cache: ICache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify(args, name)
 
@@ -136,9 +136,9 @@ export function memoize<CacheValue, Result extends CacheValue, Args extends any[
 
 ### memoizeAsync
 ```ts
-function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+function memoizeAsync<Result, Args extends any[]>(
   options: {
-    cache: ICache<CacheValue>
+    cache: ICache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
 
@@ -156,9 +156,9 @@ function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>
 
 ### memoizeWithAsyncCache
 ```ts
-function memoizeWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
+function memoizeWithAsyncCache<Result, Args extends any[]>(
   options: {
-    cache: IAsyncCache<CacheValue>
+    cache: IAsyncCache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
 
@@ -176,11 +176,11 @@ function memoizeWithAsyncCache<CacheValue, Result extends CacheValue, Args exten
 
 ### memoizeStaleWhileRevalidate
 ```ts
-function memoizeStaleWhileRevalidate<CacheValue, Result extends CacheValue, Args extends any[]>(
+function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
   options: {
     cache:
-    | IStaleWhileRevalidateCache<CacheValue>
-    | IStaleWhileRevalidateAsyncCache<CacheValue>
+    | IStaleWhileRevalidateCache<Result>
+    | IStaleWhileRevalidateAsyncCache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
 
@@ -198,9 +198,9 @@ function memoizeStaleWhileRevalidate<CacheValue, Result extends CacheValue, Args
 
 ### memoizeStaleIfError
 ```ts
-function memoizeStaleIfError<CacheValue, Resulte extends CacheValue, Args extends any[]>(
+function memoizeStaleIfError<Result, Args extends any[]>(
   options: {
-    cache: IStaleIfErrorCache<CacheValue>
+    cache: IStaleIfErrorCache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
 
@@ -218,9 +218,9 @@ function memoizeStaleIfError<CacheValue, Resulte extends CacheValue, Args extend
 
 ### memoizeAsyncStaleIfError
 ```ts
-function memoizeAsyncStaleIfError<CacheValue, Resulte extends CacheValue, Args extends any[]>(
+function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   options: {
-    cache: IStaleIfErrorCache<CacheValue>
+    cache: IStaleIfErrorCache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
 
@@ -238,9 +238,9 @@ function memoizeAsyncStaleIfError<CacheValue, Resulte extends CacheValue, Args e
 
 ### memoizeStaleIfErrorWithAsyncCache
 ```ts
-function memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue, Args extends any[]>(
+function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   options: {
-    cache: IStaleIfErrorAsyncCache<CacheValue>
+    cache: IStaleIfErrorAsyncCache<Result>
     name: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
 
@@ -258,11 +258,11 @@ function memoizeStaleIfErrorWithAsyncCache<CacheValue, Result extends CacheValue
 
 ### memoizeStaleWhileRevalidateAndStaleIfError
 ```ts
-function memoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Result extends CacheValue, Args extends any[]>(
+function memoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]>(
   options: {
     cache:
-    | IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
-    | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
+    | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
+    | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string // The default is fast-json-stable-stringify([args, name])
 

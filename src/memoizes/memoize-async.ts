@@ -1,18 +1,14 @@
 import { ICache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
-export function memoizeAsync<
-  CacheValue
-, Result extends CacheValue
-, Args extends any[]
->(
+export function memoizeAsync<Result, Args extends any[]>(
   {
     cache
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
   }: {
-    cache: ICache<CacheValue>
+    cache: ICache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string
 
@@ -32,7 +28,7 @@ export function memoizeAsync<
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {
-      return value as Result
+      return value
     } else {
       if (pendings.has(key)) return pendings.get(key)!
       return await refresh.call(this, key, args)

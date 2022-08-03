@@ -1,18 +1,14 @@
 import { IStaleIfErrorCache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 
-export function memoizeAsyncStaleIfError<
-  CacheValue
-, Result extends CacheValue
-, Args extends any[]
->(
+export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   {
     cache
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
   }: {
-    cache: IStaleIfErrorCache<CacheValue>
+    cache: IStaleIfErrorCache<Result>
     name?: string
     createKey?: (args: Args, name?: string) => string
 
@@ -32,19 +28,19 @@ export function memoizeAsyncStaleIfError<
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {
-      return value as Result
+      return value
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
           return await pendings.get(key)!
         } catch {
-          return value as Result
+          return value
         }
       } else {
         try {
           return await refresh.call(this, key, args)
         } catch {
-          return value as Result
+          return value
         }
       }
     } else {
