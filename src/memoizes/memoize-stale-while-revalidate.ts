@@ -61,7 +61,7 @@ export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
-      return value
+      return createReturnValue(value, state, verbose)
     } else if (state === State.StaleWhileRevalidate) {
       queueMicrotask(async () => {
         if (!pendings.has(key)) {
@@ -70,7 +70,9 @@ export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
       })
       return createReturnValue(value, state, verbose)
     } else {
-      if (pendings.has(key)) return await pendings.get(key)!
+      if (pendings.has(key)) {
+        return createReturnValue(await pendings.get(key)!, state, verbose)
+      }
       return createReturnValue(await refresh.call(this, key, args), state, verbose)
     }
   }

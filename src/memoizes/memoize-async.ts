@@ -56,7 +56,9 @@ export function memoizeAsync<Result, Args extends any[]>(
     if (state === State.Hit) {
       return createReturnValue(value, state, verbose)
     } else {
-      if (pendings.has(key)) return pendings.get(key)!
+      if (pendings.has(key)) {
+        return createReturnValue(await pendings.get(key)!, state, verbose)
+      }
       return createReturnValue(
         await refresh.call(this, key, args)
       , state

@@ -111,8 +111,11 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
         }
       }
     } else {
-      if (pendings.has(key)) return await pendings.get(key)!
-      return await refresh.call(this, key, args)
+      if (pendings.has(key)) {
+        return createReturnValue(await pendings.get(key)!, state, verbose)
+      }
+
+      return createReturnValue(await refresh.call(this, key, args), state, verbose)
     }
   }
 
