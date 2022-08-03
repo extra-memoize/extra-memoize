@@ -2,6 +2,8 @@ import { IStaleIfErrorCache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
+
 interface IMemoizeStaleIfErrorOptions<Result, Args extends any[]> {
   cache: IStaleIfErrorCache<Result>
   name?: string
@@ -20,7 +22,7 @@ interface IMemoizeStaleIfErrorOptions<Result, Args extends any[]> {
 export function memoizeStaleIfError<Result, Args extends any[]>(
   options: IMemoizeStaleIfErrorOptions<Result, Args> & { verbose: true }
 , fn: (...args: Args) => Result
-): (...args: Args) => [Result, State.Hit | State.Miss | State.StaleIfError]
+): (...args: Args) => VerboseResult<Result>
 export function memoizeStaleIfError<Result, Args extends any[]>(
   options: IMemoizeStaleIfErrorOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Result
@@ -32,7 +34,7 @@ export function memoizeStaleIfError<Result, Args extends any[]>(
 export function memoizeStaleIfError<Result, Args extends any[]>(
   options: IMemoizeStaleIfErrorOptions<Result, Args>
 , fn: (...args: Args) => Result
-): (...args: Args) => Result | [Result, State.Hit | State.Miss | State.StaleIfError]
+): (...args: Args) => Result | VerboseResult<Result>
 export function memoizeStaleIfError<Result, Args extends any[]>(
   {
     cache
@@ -42,13 +44,8 @@ export function memoizeStaleIfError<Result, Args extends any[]>(
   , verbose = false
   }: IMemoizeStaleIfErrorOptions<Result, Args>
 , fn: (...args: Args) => Result
-): (...args: Args) =>
-| Result
-| [Result, State.Hit | State.Miss | State.StaleIfError] {
-  return function (
-    this: unknown
-  , ...args: Args
-  ): Result | [Result, State.Hit | State.Miss | State.StaleIfError] {
+): (...args: Args) => Result | VerboseResult<Result> {
+  return function (this: unknown, ...args: Args): Result | VerboseResult<Result> {
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {

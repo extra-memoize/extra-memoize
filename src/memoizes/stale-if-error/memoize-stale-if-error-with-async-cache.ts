@@ -3,6 +3,8 @@ import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { Awaitable } from '@blackglory/prelude'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
+
 interface IMemoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]> {
   cache: IStaleIfErrorCache<Result> | IStaleIfErrorAsyncCache<Result>
   name?: string
@@ -20,10 +22,7 @@ interface IMemoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]> {
 
 export function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args> & { verbose: true }
-, fn: (...args: Args) => Awaitable<[
-  Result
-, State.Hit | State.Miss | State.StaleIfError
-]>
+, fn: (...args: Args) => Awaitable<VerboseResult<Result>>
 ): (...args: Args) => Promise<Result>
 export function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args> & { verbose: false }
@@ -36,10 +35,7 @@ export function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
 export function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   options: IMemoizeStaleIfErrorWithAsyncCache<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<
-| Result
-| [Result, State.Hit | State.Miss | State.StaleIfError]
->
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 export function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   {
     cache
@@ -49,16 +45,13 @@ export function memoizeStaleIfErrorWithAsyncCache<Result, Args extends any[]>(
   , verbose = false
   }: IMemoizeStaleIfErrorWithAsyncCache<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<
-| Result
-| [Result, State.Hit | State.Miss | State.StaleIfError]
-> {
+): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
-  return async function (
-    this: unknown
-  , ...args: Args
-  ): Promise<Result | [Result, State.Hit | State.Miss | State.StaleIfError]> {
+  return async function (this: unknown, ...args: Args): Promise<
+  | Result
+  | VerboseResult<Result>
+  > {
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {

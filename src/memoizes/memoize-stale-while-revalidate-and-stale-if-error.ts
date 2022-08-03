@@ -7,6 +7,11 @@ import { pass, Awaitable } from '@blackglory/prelude'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+type VerboseResult<T> = [
+  T
+, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError
+]
+
 interface IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]> {
   cache:
   | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
@@ -31,10 +36,7 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
   options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
          & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<[
-  Result
-, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError
-]>
+): (...args: Args) => Promise<VerboseResult<Result>>
 export function memoizeStaleWhileRevalidateAndStaleIfError<
   Result
 , Args extends any[]
@@ -59,10 +61,7 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
 >(
   options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<
-| Result
-| [Result, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError]
->
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 export function memoizeStaleWhileRevalidateAndStaleIfError<
   Result
 , Args extends any[]
@@ -75,18 +74,12 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
   , verbose = false
   }: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<
-| Result
-| [Result, State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError]
-> {
+): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
   return async function (this: unknown, ...args: Args): Promise<
   | Result
-  | [
-      Result
-    , State.Hit | State.Miss | State.StaleWhileRevalidate | State.StaleIfError
-    ]
+  | VerboseResult<Result>
   > {
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)

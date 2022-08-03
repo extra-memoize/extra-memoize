@@ -2,6 +2,8 @@ import { IStaleIfErrorCache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
+
 interface IMemoizeAsyncStaleIfError<Result, Args extends any[]> {
   cache: IStaleIfErrorCache<Result>
   name?: string
@@ -20,7 +22,7 @@ interface IMemoizeAsyncStaleIfError<Result, Args extends any[]> {
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: true }
 , fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<[Result, State.Hit | State.Miss | State.StaleIfError]>
+): (...args: Args) => Promise<VerboseResult<Result>>
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: false }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -32,10 +34,7 @@ export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   options: IMemoizeAsyncStaleIfError<Result, Args>
 , fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<
-| Result
-| [Result, State.Hit | State.Miss | State.StaleIfError]
->
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   {
     cache
@@ -45,15 +44,12 @@ export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
   , verbose = false
   }: IMemoizeAsyncStaleIfError<Result, Args>
 , fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<
-| Result
-| [Result, State.Hit | State.Miss | State.StaleIfError]
-> {
+): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
   return async function (this: unknown, ...args: Args): Promise<
   | Result
-  | [Result, State.Hit | State.Miss | State.StaleIfError]
+  | VerboseResult<Result>
   > {
     const key = createKey(args, name)
     const [state, value] = cache.get(key)

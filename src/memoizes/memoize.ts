@@ -2,6 +2,8 @@ import { ICache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+type VerboseResult<T> = [T, State.Hit | State.Miss]
+
 interface IMemoizeOptions<Result, Args extends any[]> {
   cache: ICache<Result>
   name?: string
@@ -20,7 +22,7 @@ interface IMemoizeOptions<Result, Args extends any[]> {
 export function memoize<Result, Args extends any[]>(
   options: IMemoizeOptions<Result, Args> & { verbose: true }
 , fn: (...args: Args) => Result
-): (...args: Args) => [Result, State.Hit | State.Miss]
+): (...args: Args) => VerboseResult<Result>
 export function memoize<Result, Args extends any[]>(
   options: IMemoizeOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Result
@@ -32,7 +34,7 @@ export function memoize<Result, Args extends any[]>(
 export function memoize<Result, Args extends any[]>(
   options: IMemoizeOptions<Result, Args>
 , fn: (...args: Args) => Result
-): (...args: Args) => Result | [Result, State.Hit | State.Miss]
+): (...args: Args) => Result | VerboseResult<Result>
 export function memoize<Result, Args extends any[]>(
   {
     cache
@@ -42,11 +44,8 @@ export function memoize<Result, Args extends any[]>(
   , verbose = false
   }: IMemoizeOptions<Result, Args>
 , fn: (...args: Args) => Result
-): (...args: Args) => Result | [Result, State.Hit | State.Miss] {
-  return function (
-    this: unknown
-  , ...args: Args
-  ): Result | [Result, State.Hit | State.Miss] {
+): (...args: Args) => Result | VerboseResult<Result> {
+  return function (this: unknown, ...args: Args): Result | VerboseResult<Result> {
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {

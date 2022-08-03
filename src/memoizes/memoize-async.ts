@@ -2,6 +2,8 @@ import { ICache, State } from '@src/types'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+type VerboseResult<T> = [T, State.Hit | State.Miss]
+
 interface IMemoizeAsyncOptions<Result, Args extends any[]> {
   cache: ICache<Result>
   name?: string
@@ -20,7 +22,7 @@ interface IMemoizeAsyncOptions<Result, Args extends any[]> {
 export function memoizeAsync<Result, Args extends any[]>(
   options: IMemoizeAsyncOptions<Result, Args> & { verbose: true }
 , fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<[Result, State.Hit | State.Miss]>
+): (...args: Args) => Promise<VerboseResult<Result>>
 export function memoizeAsync<Result, Args extends any[]>(
   options: IMemoizeAsyncOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => PromiseLike<Result>
@@ -32,7 +34,7 @@ export function memoizeAsync<Result, Args extends any[]>(
 export function memoizeAsync<Result, Args extends any[]>(
   options: IMemoizeAsyncOptions<Result, Args>
 , fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<Result | [Result, State.Hit | State.Miss]>
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 export function memoizeAsync<Result, Args extends any[]>(
   {
     cache
@@ -42,13 +44,13 @@ export function memoizeAsync<Result, Args extends any[]>(
   , verbose = false
   }: IMemoizeAsyncOptions<Result, Args>
 , fn: (...args: Args) => PromiseLike<Result>
-): (...args: Args) => Promise<Result | [Result, State.Hit | State.Miss]> {
+): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
-  return async function (
-    this: unknown
-  , ...args: Args
-  ): Promise<Result | [Result, State.Hit | State.Miss]> {
+  return async function (this: unknown, ...args: Args): Promise<
+  | Result
+  | VerboseResult<Result>
+  > {
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {

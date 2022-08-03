@@ -7,6 +7,8 @@ import { pass, Awaitable } from '@blackglory/prelude'
 import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleWhileRevalidate]
+
 interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
   cache:
   | IStaleWhileRevalidateCache<Result>
@@ -27,10 +29,7 @@ interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
 export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
   options: IMemoizeStalwWhileRevalidateOptions<Result, Args> & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<[
-  Result
-, State.Hit | State.Miss | State.StaleWhileRevalidate
-]>
+): (...args: Args) => Promise<VerboseResult<Result>>
 export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
   options: IMemoizeStalwWhileRevalidateOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
@@ -42,10 +41,7 @@ export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
 export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
   options: IMemoizeStalwWhileRevalidateOptions<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<
-| Result
-| [Result, State.Hit | State.Miss | State.StaleWhileRevalidate]
->
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
   {
     cache
@@ -55,15 +51,12 @@ export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
   , verbose = false
   }: IMemoizeStalwWhileRevalidateOptions<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<
-| Result
-| [Result, State.Hit | State.Miss | State.StaleWhileRevalidate]
-> {
+): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
   return async function (this: unknown, ...args: Args): Promise<
   | Result
-  | [Result, State.Hit | State.Miss | State.StaleWhileRevalidate]
+  | VerboseResult<Result>
   > {
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)

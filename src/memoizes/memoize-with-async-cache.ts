@@ -3,6 +3,8 @@ import { defaultCreateKey } from '@memoizes/utils/default-create-key'
 import { Awaitable } from '@blackglory/prelude'
 import { createReturnValue } from '@memoizes/utils/create-return-value'
 
+type VerboseResult<T> = [T, State.Hit | State.Miss]
+
 interface IMemoizeWithAsyncCacheOptions<Result, Args extends any[]> {
   cache: IAsyncCache<Result>
   name?: string
@@ -21,7 +23,7 @@ interface IMemoizeWithAsyncCacheOptions<Result, Args extends any[]> {
 export function memoizeWithAsyncCache<Result, Args extends any[]>(
   options: IMemoizeWithAsyncCacheOptions<Result, Args> & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<[Result, State.Hit | State.Miss]>
+): (...args: Args) => Promise<VerboseResult<Result>>
 export function memoizeWithAsyncCache<Result, Args extends any[]>(
   options: IMemoizeWithAsyncCacheOptions<Result, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
@@ -33,7 +35,7 @@ export function memoizeWithAsyncCache<Result, Args extends any[]>(
 export function memoizeWithAsyncCache<Result, Args extends any[]>(
   options: IMemoizeWithAsyncCacheOptions<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<Result | [Result, State.Hit | State.Miss]>
+): (...args: Args) => Promise<Result | VerboseResult<Result>>
 export function memoizeWithAsyncCache<Result, Args extends any[]>(
   {
     cache
@@ -43,13 +45,13 @@ export function memoizeWithAsyncCache<Result, Args extends any[]>(
   , verbose = false
   }: IMemoizeWithAsyncCacheOptions<Result, Args>
 , fn: (...args: Args) => Awaitable<Result>
-): (...args: Args) => Promise<Result | [Result, State.Hit | State.Miss]> {
+): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
-  return async function (
-    this: unknown
-  , ...args: Args
-  ): Promise<Result | [Result, State.Hit | State.Miss]> {
+  return async function (this: unknown, ...args: Args): Promise<
+  | Result
+  | VerboseResult<Result>
+  > {
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
