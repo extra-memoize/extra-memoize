@@ -9,12 +9,12 @@ describe('memoizeStaleIfError', () => {
     const fn = jest.fn((text: string) => text)
     const cache = new SIECache(() => State.Hit)
 
-    const memoizedFn = memoizeStaleIfError({ cache }, fn)
+    const memoizedFn = memoizeStaleIfError({ cache, verbose: true }, fn)
     const result1 = memoizedFn('foo')
     const result2 = memoizedFn('foo')
 
-    expect(result1).toBe('foo')
-    expect(result2).toBe('foo')
+    expect(result1).toStrictEqual(['foo', State.Miss])
+    expect(result2).toStrictEqual(['foo', State.Hit])
     expect(fn).toBeCalledTimes(1)
   })
 
@@ -24,7 +24,7 @@ describe('memoizeStaleIfError', () => {
     })
     const cache = new SIECache(() => State.Hit)
 
-    const memoizedFn = memoizeStaleIfError({ cache }, fn)
+    const memoizedFn = memoizeStaleIfError({ cache, verbose: true }, fn)
     const err1 = getError(() => memoizedFn('foo'))
     const err2 = getError(() => memoizedFn('foo'))
 
@@ -44,16 +44,16 @@ describe('memoizeStaleIfError', () => {
           .mockReturnValue(State.Hit)
       )
 
-      const memoizedFn = memoizeStaleIfError({ cache }, fn)
+      const memoizedFn = memoizeStaleIfError({ cache, verbose: true }, fn)
       const result1 = memoizedFn() // miss, 1
       const result2 = memoizedFn() // hit, 1
       const result3 = memoizedFn() // stale, revalidate, no error, 2
       const result4 = memoizedFn() // hit, 2
 
-      expect(result1).toBe(1)
-      expect(result2).toBe(1)
-      expect(result3).toBe(2)
-      expect(result4).toBe(2)
+      expect(result1).toStrictEqual([1, State.Miss])
+      expect(result2).toStrictEqual([1, State.Hit])
+      expect(result3).toStrictEqual([2, State.StaleIfError])
+      expect(result4).toStrictEqual([2, State.Hit])
       expect(fn).toBeCalledTimes(2)
     })
 
@@ -73,16 +73,16 @@ describe('memoizeStaleIfError', () => {
             .mockReturnValue(State.Hit)
         )
 
-        const memoizedFn = memoizeStaleIfError({ cache }, fn)
+        const memoizedFn = memoizeStaleIfError({ cache, verbose: true }, fn)
         const result1 = memoizedFn() // miss, 1
         const result2 = memoizedFn() // stale, revalidate, error, 1
         const result3 = memoizedFn() // stale, revalidate, no error, 2
         const result4 = memoizedFn() // hit, 2
 
-        expect(result1).toBe(1)
-        expect(result2).toBe(1)
-        expect(result3).toBe(2)
-        expect(result4).toBe(2)
+        expect(result1).toStrictEqual([1, State.Miss])
+        expect(result2).toStrictEqual([1, State.StaleIfError])
+        expect(result3).toStrictEqual([2, State.StaleIfError])
+        expect(result4).toStrictEqual([2, State.Hit])
         expect(fn).toBeCalledTimes(3)
       })
     })
@@ -109,12 +109,13 @@ describe('memoizeStaleIfError', () => {
         const memoizedFn = memoizeStaleIfError({
           cache
         , executionTimeThreshold: 200
+        , verbose: true
         }, fn)
         const result1 = memoizedFn('foo')
         const result2 = memoizedFn('foo')
 
-        expect(result1).toBe('foo')
-        expect(result2).toBe('foo')
+        expect(result1).toStrictEqual(['foo', State.Miss])
+        expect(result2).toStrictEqual(['foo', State.Hit])
         expect(fn).toBeCalledTimes(1)
       })
     })
@@ -127,12 +128,13 @@ describe('memoizeStaleIfError', () => {
         const memoizedFn = memoizeStaleIfError({
           cache
         , executionTimeThreshold: 200
+        , verbose: true
         }, fn)
         const result1 = memoizedFn('foo')
         const result2 = memoizedFn('foo')
 
-        expect(result1).toBe('foo')
-        expect(result2).toBe('foo')
+        expect(result1).toStrictEqual(['foo', State.Miss])
+        expect(result2).toStrictEqual(['foo', State.Miss])
         expect(fn).toBeCalledTimes(2)
       })
     })
