@@ -16,7 +16,10 @@ type VerboseResult<T> = [
   | State.StaleIfError
 ]
 
-interface IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]> {
+export interface IMemoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+> {
   cache:
   | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
   | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>

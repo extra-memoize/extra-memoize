@@ -5,7 +5,7 @@ import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
 
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.Reuse]
 
-interface IMemoizeAsyncOptions<Result, Args extends any[]> {
+export interface IMemoizeAsyncOptions<Result, Args extends any[]> {
   cache: ICache<Result> | IAsyncCache<Result>
   name?: string
   createKey?: (args: Args, name?: string) => string

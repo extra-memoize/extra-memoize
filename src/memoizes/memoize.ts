@@ -4,7 +4,7 @@ import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
 
 type VerboseResult<T> = [T, State.Hit | State.Miss]
 
-interface IMemoizeOptions<Result, Args extends any[]> {
+export interface IMemoizeOptions<Result, Args extends any[]> {
   cache: ICache<Result>
   name?: string
   createKey?: (args: Args, name?: string) => string

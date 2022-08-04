@@ -12,7 +12,7 @@ type VerboseResult<T> = [
 , State.Hit | State.Miss | State.Reuse | State.StaleWhileRevalidate
 ]
 
-interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
+export interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
   cache:
   | IStaleWhileRevalidateCache<Result>
   | IStaleWhileRevalidateAsyncCache<Result>
