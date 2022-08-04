@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/extra-memoize/extra-memoize/compare/v0.7.0...v0.8.0) (2022-08-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* Merge `memoizeStaleIfErrorWithAsyncCache` into `memoizeAsyncStaleIfError`
+* Merge `memoizeWithAsyncCache` into `memoizeAsync`
+* Changed generic types of functions
+
+### Features
+
+* add State.Reuse ([6d8042f](https://github.com/extra-memoize/extra-memoize/commit/6d8042f0d929e464fa701903180a6ae69d0a6dff))
+* add verbose option ([a3a975d](https://github.com/extra-memoize/extra-memoize/commit/a3a975d85875fe3b7a4df4e3653d5420303d55a5))
+
+
+### Bug Fixes
+
+* verbose ([11c24c9](https://github.com/extra-memoize/extra-memoize/commit/11c24c9adbee85cd83932cc99085e2fa3c5830dc))
+* verbose ([281b0ef](https://github.com/extra-memoize/extra-memoize/commit/281b0effd548524a48fe5585af43b4ff3d91add7))
+
+
+* merge `memoizeStaleIfErrorWithAsyncCache` into `memoizeAsyncStaleIfError` ([d790a5e](https://github.com/extra-memoize/extra-memoize/commit/d790a5e868cac6cb75d2b5c9222d0e527ef01761))
+* merge `memoizeWithAsyncCache` into `memoizeAsync` ([3c00de9](https://github.com/extra-memoize/extra-memoize/commit/3c00de920d187e712fa2178b4ae3c2853c0006e7))
+* remove CacheValue ([f5a5988](https://github.com/extra-memoize/extra-memoize/commit/f5a598888852ee2e09c8baea21286e2725bf7684))
+
 ## [0.7.0](https://github.com/extra-memoize/extra-memoize/compare/v0.6.0...v0.7.0) (2022-06-26)
 
 
