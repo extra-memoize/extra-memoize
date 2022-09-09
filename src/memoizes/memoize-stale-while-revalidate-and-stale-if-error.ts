@@ -19,10 +19,11 @@ type VerboseResult<T> = [
 export interface IMemoizeStaleWhileRevalidateAndStaleIfError<
   Result
 , Args extends any[]
+, CacheValue extends Result = Result
 > {
   cache:
-  | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
-  | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
+  | IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
+  | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
   name?: string
   createKey?: (args: Args, name?: string) => string
   verbose?: boolean

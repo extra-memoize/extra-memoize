@@ -11,8 +11,12 @@ type VerboseResult<T> = [
   | State.StaleIfError
 ]
 
-export interface IMemoizeAsyncStaleIfError<Result, Args extends any[]> {
-  cache: IStaleIfErrorCache<Result> | IStaleIfErrorAsyncCache<Result>
+export interface IMemoizeAsyncStaleIfError<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
+  cache: IStaleIfErrorCache<CacheValue> | IStaleIfErrorAsyncCache<CacheValue>
   name?: string
   createKey?: (args: Args, name?: string) => string
   verbose?: boolean

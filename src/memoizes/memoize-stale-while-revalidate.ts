@@ -12,10 +12,14 @@ type VerboseResult<T> = [
 , State.Hit | State.Miss | State.Reuse | State.StaleWhileRevalidate
 ]
 
-export interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
+export interface IMemoizeStalwWhileRevalidateOptions<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
   cache:
-  | IStaleWhileRevalidateCache<Result>
-  | IStaleWhileRevalidateAsyncCache<Result>
+  | IStaleWhileRevalidateCache<CacheValue>
+  | IStaleWhileRevalidateAsyncCache<CacheValue>
   name?: string
   createKey?: (args: Args, name?: string) => string
   verbose?: boolean

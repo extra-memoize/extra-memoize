@@ -119,8 +119,12 @@ interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
 ```ts
 type VerboseResult<T> = [T, State.Hit | State.Miss]
 
-interface IMemoizeOptions<Result, Args extends any[]> {
-  cache: ICache<Result>
+interface IMemoizeOptions<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
+  cache: ICache<CacheValue>
   name?: string
   verbose?: boolean = false
 
@@ -158,8 +162,12 @@ function memoize<Result, Args extends any[]>(
 ```ts
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.Reuse]
 
-interface IMemoizeAsyncOptions<Result, Args extends any[]> {
-  cache: ICache<Result> | IAsyncCache<Result>
+interface IMemoizeAsyncOptions<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
+  cache: ICache<CacheValue> | IAsyncCache<CacheValue>
   name?: string
   verbose?: boolean = false
 
@@ -200,10 +208,14 @@ type VerboseResult<T> = [
 , State.Hit | State.Miss | State.Reuse | State.StaleWhileRevalidate
 ]
 
-interface IMemoizeStalwWhileRevalidateOptions<Result, Args extends any[]> {
+interface IMemoizeStalwWhileRevalidateOptions<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
   cache:
-  | IStaleWhileRevalidateCache<Result>
-  | IStaleWhileRevalidateAsyncCache<Result>
+  | IStaleWhileRevalidateCache<CacheValue>
+  | IStaleWhileRevalidateAsyncCache<CacheValue>
   name?: string
   verbose?: boolean = false
 
@@ -241,8 +253,12 @@ function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
 ```ts
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
 
-interface IMemoizeStaleIfErrorOptions<Result, Args extends any[]> {
-  cache: IStaleIfErrorCache<Result>
+interface IMemoizeStaleIfErrorOptions<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
+  cache: IStaleIfErrorCache<CacheValue>
   name?: string
   verbose?: boolean = false
 
@@ -286,8 +302,12 @@ type VerboseResult<T> = [
   | State.StaleIfError
 ]
 
-interface IMemoizeStaleIfErrorOptions<Result, Args extends any[]> {
-  cache: IStaleIfErrorCache<Result> | IStaleifErrorAsyncCache<Result>
+interface IMemoizeStaleIfErrorOptions<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
+  cache: IStaleIfErrorCache<CacheValue> | IStaleifErrorAsyncCache<CacheValue>
   name?: string
   verbose?: boolean = false
 
@@ -332,10 +352,14 @@ type VerboseResult<T> = [
   | State.StaleIfError
 ]
 
-interface IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args extends any[]> {
+interface IMemoizeStaleWhileRevalidateAndStaleIfError<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
   cache:
-  | IStaleWhileRevalidateAndStaleIfErrorCache<Result>
-  | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<Result>
+  | IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
+  | IStaleWhileRevalidateAndStaleIfErrorAsyncCache<CacheValue>
   name?: string
   verbose?: boolean = false
 

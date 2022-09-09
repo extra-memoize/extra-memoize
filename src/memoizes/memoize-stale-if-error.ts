@@ -4,8 +4,12 @@ import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
 
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
 
-export interface IMemoizeStaleIfErrorOptions<Result, Args extends any[]> {
-  cache: IStaleIfErrorCache<Result>
+export interface IMemoizeStaleIfErrorOptions<
+  Result
+, Args extends any[]
+, CacheValue extends Result = Result
+> {
+  cache: IStaleIfErrorCache<CacheValue>
   name?: string
   createKey?: (args: Args, name?: string) => string
   verbose?: boolean
