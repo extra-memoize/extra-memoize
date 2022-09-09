@@ -6,6 +6,7 @@ import { SIECache, SIEAsyncCache } from '@test/utils'
 import { State } from '@src/types'
 import { getErrorPromise } from 'return-style'
 import { delay } from 'extra-promise'
+import { Awaitable } from '@blackglory/prelude'
 import '@blackglory/jest-matchers'
 
 describe('memoizeAsyncStaleIfError', () => {
@@ -233,9 +234,13 @@ describe('memoizeAsyncStaleIfError', () => {
   })
 })
 
-function memoizeAsyncStaleIfErrorVerbose<Result, Args extends any[]>(
+function memoizeAsyncStaleIfErrorVerbose<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
   options: IMemoizeAsyncStaleIfError<Result, Args>
-, fn: (...args: Args) => Result
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<[Result, State]> {
   return memoizeAsyncStaleIfError({ ...options, verbose: true }, fn)
 }

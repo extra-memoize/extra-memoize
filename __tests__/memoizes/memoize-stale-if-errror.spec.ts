@@ -147,7 +147,11 @@ describe('memoizeStaleIfError', () => {
   })
 })
 
-function memoizeStaleIfErrorVerbose<Result, Args extends any[]>(
+function memoizeStaleIfErrorVerbose<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
   options: IMemoizeStaleIfErrorOptions<Result, Args>
 , fn: (...args: Args) => Result
 ): (...args: Args) => [Result, State] {

@@ -5,11 +5,7 @@ import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
 
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.Reuse]
 
-export interface IMemoizeAsyncOptions<
-  Result
-, Args extends any[]
-, CacheValue extends Result = Result
-> {
+export interface IMemoizeAsyncOptions<CacheValue, Args extends any[]> {
   cache: ICache<CacheValue> | IAsyncCache<CacheValue>
   name?: string
   createKey?: (args: Args, name?: string) => string
@@ -24,30 +20,30 @@ export interface IMemoizeAsyncOptions<
   executionTimeThreshold?: number
 }
 
-export function memoizeAsync<Result, Args extends any[]>(
-  options: IMemoizeAsyncOptions<Result, Args> & { verbose: true }
+export function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeAsyncOptions<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
-export function memoizeAsync<Result, Args extends any[]>(
-  options: IMemoizeAsyncOptions<Result, Args> & { verbose: false }
+export function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeAsyncOptions<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-export function memoizeAsync<Result, Args extends any[]>(
-  options: Omit<IMemoizeAsyncOptions<Result, Args>, 'verbose'>
+export function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: Omit<IMemoizeAsyncOptions<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-export function memoizeAsync<Result, Args extends any[]>(
-  options: IMemoizeAsyncOptions<Result, Args>
+export function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeAsyncOptions<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
-export function memoizeAsync<Result, Args extends any[]>(
+export function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
   {
     cache
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
   , verbose = false
-  }: IMemoizeAsyncOptions<Result, Args>
+  }: IMemoizeAsyncOptions<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
@@ -67,7 +63,7 @@ export function memoizeAsync<Result, Args extends any[]>(
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
-      return createVerboseResult(value, state)
+      return createVerboseResult(value as Result, state)
     } else {
       if (pendings.has(key)) {
         return createVerboseResult(await pendings.get(key)!, State.Reuse)

@@ -12,11 +12,7 @@ type VerboseResult<T> = [
 , State.Hit | State.Miss | State.Reuse | State.StaleWhileRevalidate
 ]
 
-export interface IMemoizeStalwWhileRevalidateOptions<
-  Result
-, Args extends any[]
-, CacheValue extends Result = Result
-> {
+export interface IMemoizeStalwWhileRevalidateOptions<CacheValue, Args extends any[]> {
   cache:
   | IStaleWhileRevalidateCache<CacheValue>
   | IStaleWhileRevalidateAsyncCache<CacheValue>
@@ -33,30 +29,50 @@ export interface IMemoizeStalwWhileRevalidateOptions<
   executionTimeThreshold?: number
 }
 
-export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: IMemoizeStalwWhileRevalidateOptions<Result, Args> & { verbose: true }
+export function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStalwWhileRevalidateOptions<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
-export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: IMemoizeStalwWhileRevalidateOptions<Result, Args> & { verbose: false }
+export function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStalwWhileRevalidateOptions<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: Omit<IMemoizeStalwWhileRevalidateOptions<Result, Args>, 'verbose'>
+export function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: Omit<IMemoizeStalwWhileRevalidateOptions<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: IMemoizeStalwWhileRevalidateOptions<Result, Args>
+export function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStalwWhileRevalidateOptions<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
-export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
+export function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
   {
     cache
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
   , verbose = false
-  }: IMemoizeStalwWhileRevalidateOptions<Result, Args>
+  }: IMemoizeStalwWhileRevalidateOptions<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
@@ -76,14 +92,14 @@ export function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
-      return createVerboseResult(value, state)
+      return createVerboseResult(value as Result, state)
     } else if (state === State.StaleWhileRevalidate) {
       queueMicrotask(async () => {
         if (!pendings.has(key)) {
           refresh.call(this, key, args).catch(pass)
         }
       })
-      return createVerboseResult(value, state)
+      return createVerboseResult(value as Result, state)
     } else {
       if (pendings.has(key)) {
         return createVerboseResult(await pendings.get(key)!, State.Reuse)

@@ -119,11 +119,7 @@ interface IStaleWhileRevalidateAndStaleIfErrorAsyncCache<T> {
 ```ts
 type VerboseResult<T> = [T, State.Hit | State.Miss]
 
-interface IMemoizeOptions<
-  Result
-, Args extends any[]
-, CacheValue extends Result = Result
-> {
+interface IMemoizeOptions<CacheValue, Args extends any[]> {
   cache: ICache<CacheValue>
   name?: string
   verbose?: boolean = false
@@ -140,20 +136,20 @@ interface IMemoizeOptions<
   executionTimeThreshold?: number = 0
 }
 
-function memoize<Result, Args extends any[]>(
-  options: IMemoizeOptions<Result, Args> & { verbose: true }
+function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeOptions<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Result
 ): (...args: Args) => VerboseResult<Result>
-function memoize<Result, Args extends any[]>(
-  options: IMemoizeOptions<Result, Args> & { verbose: false }
+function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeOptions<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
-function memoize<Result, Args extends any[]>(
-  options: Omit<IMemoizeOptions<Result, Args>, 'verbose'>
+function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: Omit<IMemoizeOptions<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
-function memoize<Result, Args extends any[]>(
-  options: IMemoizeOptions<Result, Args>
+function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeOptions<CacheValue, Args>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result | VerboseResult<Result>
 ```
@@ -162,11 +158,7 @@ function memoize<Result, Args extends any[]>(
 ```ts
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.Reuse]
 
-interface IMemoizeAsyncOptions<
-  Result
-, Args extends any[]
-, CacheValue extends Result = Result
-> {
+interface IMemoizeAsyncOptions<CacheValue, Args extends any[]> {
   cache: ICache<CacheValue> | IAsyncCache<CacheValue>
   name?: string
   verbose?: boolean = false
@@ -183,20 +175,20 @@ interface IMemoizeAsyncOptions<
   executionTimeThreshold?: number
 }
 
-function memoizeAsync<Result, Args extends any[]>(
-  options: IMemoizeAsyncOptions<Result, Args> & { verbose: true }
+function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeAsyncOptions<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
-function memoizeAsync<Result, Args extends any[]>(
-  options: IMemoizeAsyncOptions<Result, Args> & { verbose: false }
+function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeAsyncOptions<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-function memoizeAsync<Result, Args extends any[]>(
-  options: Omit<IMemoizeAsyncOptions<Result, Args>, 'verbose'>
+function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: Omit<IMemoizeAsyncOptions<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-function memoizeAsync<Result, Args extends any[]>(
-  options: IMemoizeAsyncOptions<Result, Args>
+function memoizeAsync<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeAsyncOptions<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
@@ -209,9 +201,8 @@ type VerboseResult<T> = [
 ]
 
 interface IMemoizeStalwWhileRevalidateOptions<
-  Result
+  CacheValue
 , Args extends any[]
-, CacheValue extends Result = Result
 > {
   cache:
   | IStaleWhileRevalidateCache<CacheValue>
@@ -231,20 +222,36 @@ interface IMemoizeStalwWhileRevalidateOptions<
   executionTimeThreshold?: number
 }
 
-function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: IMemoizeStalwWhileRevalidateOptions<Result, Args> & { verbose: true }
+function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStalwWhileRevalidateOptions<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
-function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: IMemoizeStalwWhileRevalidateOptions<Result, Args> & { verbose: false }
+function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStalwWhileRevalidateOptions<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: Omit<IMemoizeStalwWhileRevalidateOptions<Result, Args>, 'verbose'>
+function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: Omit<IMemoizeStalwWhileRevalidateOptions<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
-  options: IMemoizeStalwWhileRevalidateOptions<Result, Args>
+function memoizeStaleWhileRevalidate<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStalwWhileRevalidateOptions<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
@@ -253,11 +260,7 @@ function memoizeStaleWhileRevalidate<Result, Args extends any[]>(
 ```ts
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
 
-interface IMemoizeStaleIfErrorOptions<
-  Result
-, Args extends any[]
-, CacheValue extends Result = Result
-> {
+interface IMemoizeStaleIfErrorOptions<CacheValue, Args extends any[]> {
   cache: IStaleIfErrorCache<CacheValue>
   name?: string
   verbose?: boolean = false
@@ -274,20 +277,36 @@ interface IMemoizeStaleIfErrorOptions<
   executionTimeThreshold?: number
 }
 
-function memoizeStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorOptions<Result, Args> & { verbose: true }
+function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStaleIfErrorOptions<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Result
 ): (...args: Args) => VerboseResult<Result>
-function memoizeStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorOptions<Result, Args> & { verbose: false }
+function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStaleIfErrorOptions<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
-function memoizeStaleIfError<Result, Args extends any[]>(
-  options: Omit<IMemoizeStaleIfErrorOptions<Result, Args>, 'verbose'>
+function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: Omit<IMemoizeStaleIfErrorOptions<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
-function memoizeStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorOptions<Result, Args>
+function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStaleIfErrorOptions<CacheValue, Args>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result | VerboseResult<Result>
 ```
@@ -302,11 +321,7 @@ type VerboseResult<T> = [
   | State.StaleIfError
 ]
 
-interface IMemoizeStaleIfErrorOptions<
-  Result
-, Args extends any[]
-, CacheValue extends Result = Result
-> {
+interface IMemoizeStaleIfErrorOptions<CacheValue, Args extends any[]> {
   cache: IStaleIfErrorCache<CacheValue> | IStaleifErrorAsyncCache<CacheValue>
   name?: string
   verbose?: boolean = false
@@ -323,20 +338,36 @@ interface IMemoizeStaleIfErrorOptions<
   executionTimeThreshold?: number
 }
 
-function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: true }
+function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeAsyncStaleIfError<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
-function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: false }
+function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeAsyncStaleIfError<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: Omit<IMemoizeAsyncStaleIfError<Result, Args>, 'verbose'>
+function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: Omit<IMemoizeAsyncStaleIfError<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeAsyncStaleIfError<Result, Args>
+function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeAsyncStaleIfError<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```
@@ -353,9 +384,8 @@ type VerboseResult<T> = [
 ]
 
 interface IMemoizeStaleWhileRevalidateAndStaleIfError<
-  Result
+  CacheValue
 , Args extends any[]
-, CacheValue extends Result = Result
 > {
   cache:
   | IStaleWhileRevalidateAndStaleIfErrorCache<CacheValue>
@@ -376,36 +406,40 @@ interface IMemoizeStaleWhileRevalidateAndStaleIfError<
 }
 
 function memoizeStaleWhileRevalidateAndStaleIfError<
-  Result
+  CacheValue
+, Result extends CacheValue
 , Args extends any[]
 >(
-  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Args>
          & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
 function memoizeStaleWhileRevalidateAndStaleIfError<
-  Result
+  CacheValue
+, Result extends CacheValue
 , Args extends any[]
 >(
-  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Args>
          & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 function memoizeStaleWhileRevalidateAndStaleIfError<
-  Result
+  CacheValue
+, Result extends CacheValue
 , Args extends any[]
 >(
   options: Omit<
-    IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+    IMemoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Args>
   , 'verbose'
   >
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
 function memoizeStaleWhileRevalidateAndStaleIfError<
-  Result
+  CacheValue
+, Result extends CacheValue
 , Args extends any[]
 >(
-  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
 ```

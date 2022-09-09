@@ -89,8 +89,8 @@ describe('memoize', () => {
   })
 })
 
-function memoizeVerbose<Result, Args extends any[]>(
-  options: IMemoizeOptions<Result, Args>
+function memoizeVerbose<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeOptions<CacheValue, Args>
 , fn: (...args: Args) => Result
 ): (...args: Args) => [Result, State] {
   return memoize({ ...options, verbose: true }, fn)

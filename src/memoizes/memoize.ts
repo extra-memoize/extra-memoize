@@ -5,9 +5,8 @@ import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
 type VerboseResult<T> = [T, State.Hit | State.Miss]
 
 export interface IMemoizeOptions<
-  Result
+  CacheValue
 , Args extends any[]
-, CacheValue extends Result = Result
 > {
   cache: ICache<CacheValue>
   name?: string
@@ -23,30 +22,30 @@ export interface IMemoizeOptions<
   executionTimeThreshold?: number
 }
 
-export function memoize<Result, Args extends any[]>(
-  options: IMemoizeOptions<Result, Args> & { verbose: true }
+export function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeOptions<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Result
 ): (...args: Args) => VerboseResult<Result>
-export function memoize<Result, Args extends any[]>(
-  options: IMemoizeOptions<Result, Args> & { verbose: false }
+export function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeOptions<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
-export function memoize<Result, Args extends any[]>(
-  options: Omit<IMemoizeOptions<Result, Args>, 'verbose'>
+export function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: Omit<IMemoizeOptions<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
-export function memoize<Result, Args extends any[]>(
-  options: IMemoizeOptions<Result, Args>
+export function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
+  options: IMemoizeOptions<CacheValue, Args>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result | VerboseResult<Result>
-export function memoize<Result, Args extends any[]>(
+export function memoize<CacheValue, Result extends CacheValue, Args extends any[]>(
   {
     cache
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
   , verbose = false
-  }: IMemoizeOptions<Result, Args>
+  }: IMemoizeOptions<CacheValue, Args>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result | VerboseResult<Result> {
   return function (this: unknown, ...args: Args): Result | VerboseResult<Result> {
@@ -61,7 +60,7 @@ export function memoize<Result, Args extends any[]>(
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {
-      return createVerboseResult(value, state)
+      return createVerboseResult(value as Result, state)
     } else {
       return createVerboseResult(refresh.call(this, key, args), state)
     }

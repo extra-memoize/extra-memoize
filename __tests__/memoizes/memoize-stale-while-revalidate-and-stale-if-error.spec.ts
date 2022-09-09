@@ -6,6 +6,7 @@ import { State } from '@src/types'
 import { SWRAndSIECache, SWRAndSIEAsyncCache } from '@test/utils'
 import { getErrorPromise } from 'return-style'
 import { delay } from 'extra-promise'
+import { Awaitable } from '@blackglory/prelude'
 import '@blackglory/jest-matchers'
 
 describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
@@ -347,11 +348,12 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
 })
 
 function memoizeStaleWhileRevalidateAndStaleIfErrorVerbose<
-  Result
+  CacheValue
+, Result extends CacheValue
 , Args extends any[]
 >(
-  options: IMemoizeStaleWhileRevalidateAndStaleIfError<Result, Args>
-, fn: (...args: Args) => Result
+  options: IMemoizeStaleWhileRevalidateAndStaleIfError<CacheValue, Args>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<[Result, State]> {
   return memoizeStaleWhileRevalidateAndStaleIfError({ ...options, verbose: true }, fn)
 }

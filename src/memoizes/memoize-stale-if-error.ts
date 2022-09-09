@@ -4,11 +4,7 @@ import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
 
 type VerboseResult<T> = [T, State.Hit | State.Miss | State.StaleIfError]
 
-export interface IMemoizeStaleIfErrorOptions<
-  Result
-, Args extends any[]
-, CacheValue extends Result = Result
-> {
+export interface IMemoizeStaleIfErrorOptions<CacheValue, Args extends any[]> {
   cache: IStaleIfErrorCache<CacheValue>
   name?: string
   createKey?: (args: Args, name?: string) => string
@@ -23,30 +19,50 @@ export interface IMemoizeStaleIfErrorOptions<
   executionTimeThreshold?: number
 }
 
-export function memoizeStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorOptions<Result, Args> & { verbose: true }
+export function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStaleIfErrorOptions<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Result
 ): (...args: Args) => VerboseResult<Result>
-export function memoizeStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorOptions<Result, Args> & { verbose: false }
+export function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStaleIfErrorOptions<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
-export function memoizeStaleIfError<Result, Args extends any[]>(
-  options: Omit<IMemoizeStaleIfErrorOptions<Result, Args>, 'verbose'>
+export function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: Omit<IMemoizeStaleIfErrorOptions<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result
-export function memoizeStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeStaleIfErrorOptions<Result, Args>
+export function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStaleIfErrorOptions<CacheValue, Args>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result | VerboseResult<Result>
-export function memoizeStaleIfError<Result, Args extends any[]>(
+export function memoizeStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
   {
     cache
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
   , verbose = false
-  }: IMemoizeStaleIfErrorOptions<Result, Args>
+  }: IMemoizeStaleIfErrorOptions<CacheValue, Args>
 , fn: (...args: Args) => Result
 ): (...args: Args) => Result | VerboseResult<Result> {
   return function (this: unknown, ...args: Args): Result | VerboseResult<Result> {
@@ -58,12 +74,12 @@ export function memoizeStaleIfError<Result, Args extends any[]>(
     const key = createKey(args, name)
     const [state, value] = cache.get(key)
     if (state === State.Hit) {
-      return createVerboseResult(value, state)
+      return createVerboseResult(value as Result, state)
     } else if (state === State.StaleIfError) {
       try {
         return createVerboseResult(refresh.call(this, key, args), state)
       } catch {
-        return createVerboseResult(value, state)
+        return createVerboseResult(value as Result, state)
       }
     } else {
       return createVerboseResult(refresh.call(this, key, args), state)

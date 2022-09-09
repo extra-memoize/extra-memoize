@@ -3,6 +3,7 @@ import { getErrorPromise } from 'return-style'
 import { delay } from 'extra-promise'
 import { Cache, AsyncCache } from '@test/utils'
 import { State } from '@src/types'
+import { Awaitable } from '@blackglory/prelude'
 import '@blackglory/jest-matchers'
 
 describe('memoizeAsync', () => {
@@ -149,9 +150,13 @@ describe('memoizeAsync', () => {
   })
 })
 
-function memoizeAsyncVerbose<Result, Args extends any[]>(
+function memoizeAsyncVerbose<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
   options: IMemoizeAsyncOptions<Result, Args>
-, fn: (...args: Args) => Result
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<[Result, State]> {
   return memoizeAsync({ ...options, verbose: true }, fn)
 }

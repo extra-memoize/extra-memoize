@@ -11,11 +11,7 @@ type VerboseResult<T> = [
   | State.StaleIfError
 ]
 
-export interface IMemoizeAsyncStaleIfError<
-  Result
-, Args extends any[]
-, CacheValue extends Result = Result
-> {
+export interface IMemoizeAsyncStaleIfError<CacheValue, Args extends any[]> {
   cache: IStaleIfErrorCache<CacheValue> | IStaleIfErrorAsyncCache<CacheValue>
   name?: string
   createKey?: (args: Args, name?: string) => string
@@ -30,30 +26,50 @@ export interface IMemoizeAsyncStaleIfError<
   executionTimeThreshold?: number
 }
 
-export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: true }
+export function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeAsyncStaleIfError<CacheValue, Args> & { verbose: true }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<VerboseResult<Result>>
-export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeAsyncStaleIfError<Result, Args> & { verbose: false }
+export function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeAsyncStaleIfError<CacheValue, Args> & { verbose: false }
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: Omit<IMemoizeAsyncStaleIfError<Result, Args>, 'verbose'>
+export function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: Omit<IMemoizeAsyncStaleIfError<CacheValue, Args>, 'verbose'>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result>
-export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
-  options: IMemoizeAsyncStaleIfError<Result, Args>
+export function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeAsyncStaleIfError<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>>
-export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
+export function memoizeAsyncStaleIfError<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
   {
     cache
   , name
   , createKey = defaultCreateKey
   , executionTimeThreshold = 0
   , verbose = false
-  }: IMemoizeAsyncStaleIfError<Result, Args>
+  }: IMemoizeAsyncStaleIfError<CacheValue, Args>
 , fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
@@ -73,19 +89,19 @@ export function memoizeAsyncStaleIfError<Result, Args extends any[]>(
     const key = createKey(args, name)
     const [state, value] = await cache.get(key)
     if (state === State.Hit) {
-      return createVerboseResult(value, state)
+      return createVerboseResult(value as Result, state)
     } else if (state === State.StaleIfError) {
       if (pendings.has(key)) {
         try {
           return createVerboseResult(await pendings.get(key)!, State.Reuse)
         } catch {
-          return createVerboseResult(value, state)
+          return createVerboseResult(value as Result, state)
         }
       } else {
         try {
           return createVerboseResult(await refresh.call(this, key, args), state)
         } catch {
-          return createVerboseResult(value, state)
+          return createVerboseResult(value as Result, state)
         }
       }
     } else {

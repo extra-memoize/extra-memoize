@@ -6,6 +6,7 @@ import { SWRCache, SWRAsyncCache } from '@test/utils'
 import { getErrorPromise } from 'return-style'
 import { State } from '@src/types'
 import { delay } from 'extra-promise'
+import { Awaitable } from '@blackglory/prelude'
 import '@blackglory/jest-matchers'
 
 describe('memoizeStaleWhileRevalidate', () => {
@@ -258,9 +259,13 @@ describe('memoizeStaleWhileRevalidate', () => {
   })
 })
 
-function memoizeStaleWhileRevalidateVerbose<Result, Args extends any[]>(
-  options: IMemoizeStalwWhileRevalidateOptions<Result, Args>
-, fn: (...args: Args) => Result
+function memoizeStaleWhileRevalidateVerbose<
+  CacheValue
+, Result extends CacheValue
+, Args extends any[]
+>(
+  options: IMemoizeStalwWhileRevalidateOptions<CacheValue, Args>
+, fn: (...args: Args) => Awaitable<Result>
 ): (...args: Args) => Promise<[Result, State]> {
   return memoizeStaleWhileRevalidate({ ...options, verbose: true }, fn)
 }
