@@ -1,4 +1,4 @@
-import stringify from 'fast-json-stable-stringify'
+import { stringify } from 'extra-json-stable-stringify'
 
 export function defaultCreateKey<Args extends any[]>(
   args: Args

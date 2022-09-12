@@ -2972,6 +2972,13 @@ extra-generator@^0.2.16:
     "@blackglory/go" "^1.0.0"
     extra-lazy "^1.0.0"
 
+extra-json-stable-stringify@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/extra-json-stable-stringify/-/extra-json-stable-stringify-0.1.1.tgz#88cd14e18bcf5f27b91124efe1e7765a1363e539"
+  integrity sha512-uA7Ic7wtPkF8M1YpNFWg5tyAQyQzNPqHWM6hrqInthucrcwBnYJSRZn1esuqMsFav/oSdvFKFSBVJCu3YWT1Kw==
+  dependencies:
+    fast-stable-stringify "^1.0.0"
+
 extra-lazy@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/extra-lazy/-/extra-lazy-1.0.1.tgz#d657be53103725bfe4471e74134fcf0d0b805a1b"
@@ -3075,6 +3082,11 @@ fast-levenshtein@^2.0.6, fast-levenshtein@~2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
+
+fast-stable-stringify@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fast-stable-stringify/-/fast-stable-stringify-1.0.0.tgz#5c5543462b22aeeefd36d05b34e51c78cb86d313"
+  integrity sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==
 
 fastq@^1.6.0:
   version "1.13.0"

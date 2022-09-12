@@ -124,7 +124,6 @@ interface IMemoizeOptions<CacheValue, Args extends any[]> {
   name?: string
   verbose?: boolean = false
 
-  // The default is fast-json-stable-stringify(args, name)
   createKey?: (args: Args, name?: string) => string
 
   /**
@@ -163,7 +162,7 @@ interface IMemoizeAsyncOptions<CacheValue, Args extends any[]> {
   name?: string
   verbose?: boolean = false
 
-  // The default is fast-json-stable-stringify([args, name])
+  // The default is extra-json-stable-stringify([args, name])
   createKey?: (args: Args, name?: string) => string
 
   /**
@@ -210,7 +209,7 @@ interface IMemoizeStalwWhileRevalidateOptions<
   name?: string
   verbose?: boolean = false
 
-  // The default is fast-json-stable-stringify([args, name])
+  // The default is extra-json-stable-stringify([args, name])
   createKey?: (args: Args, name?: string) => string
 
   /**
@@ -265,7 +264,7 @@ interface IMemoizeStaleIfErrorOptions<CacheValue, Args extends any[]> {
   name?: string
   verbose?: boolean = false
 
-  // The default is fast-json-stable-stringify([args, name])
+  // The default is extra-json-stable-stringify([args, name])
   createKey?: (args: Args, name?: string) => string
 
   /**
@@ -326,7 +325,7 @@ interface IMemoizeStaleIfErrorOptions<CacheValue, Args extends any[]> {
   name?: string
   verbose?: boolean = false
 
-  // The default is fast-json-stable-stringify([args, name])
+  // The default is extra-json-stable-stringify([args, name])
   createKey?: (args: Args, name?: string) => string
 
   /**
@@ -393,7 +392,7 @@ interface IMemoizeStaleWhileRevalidateAndStaleIfError<
   name?: string
   verbose?: boolean = false
 
-  // The default is fast-json-stable-stringify([args, name])
+  // The default is extra-json-stable-stringify([args, name])
   createKey?: (args: Args, name?: string) => string
 
   /**
