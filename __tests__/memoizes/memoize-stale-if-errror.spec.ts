@@ -5,7 +5,6 @@ import {
 import { SIECache } from '@test/utils'
 import { State } from '@src/types'
 import { getError } from 'return-style'
-import '@blackglory/jest-matchers'
 
 describe('memoizeStaleIfError', () => {
   describe.each([

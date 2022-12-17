@@ -7,7 +7,6 @@ import { State } from '@src/types'
 import { getErrorPromise } from 'return-style'
 import { delay } from 'extra-promise'
 import { Awaitable } from '@blackglory/prelude'
-import '@blackglory/jest-matchers'
 
 describe('memoizeAsyncStaleIfError', () => {
   describe.each([
@@ -26,15 +25,11 @@ describe('memoizeAsyncStaleIfError', () => {
         const cache = new Cache(() => State.Hit)
 
         const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
-        const result1 = memoizedFn('foo')
-        const proResult1 = await result1
-        const result2 = memoizedFn('foo')
-        const proResult2 = await result2
+        const result1 = await memoizedFn('foo')
+        const result2 = await memoizedFn('foo')
 
-        expect(result1).toBePromise()
-        expect(proResult1).toStrictEqual(createResult(['foo', State.Miss]))
-        expect(result2).toBePromise()
-        expect(proResult2).toStrictEqual(createResult(['foo', State.Hit]))
+        expect(result1).toStrictEqual(createResult(['foo', State.Miss]))
+        expect(result2).toStrictEqual(createResult(['foo', State.Hit]))
         expect(fn).toBeCalledTimes(1)
       })
 
@@ -46,14 +41,10 @@ describe('memoizeAsyncStaleIfError', () => {
         const cache = new Cache(() => State.Hit)
 
         const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
-        const result1 = memoizedFn('foo')
-        const err1 = await getErrorPromise(result1)
-        const result2 = memoizedFn('foo')
-        const err2 = await getErrorPromise(result2)
+        const err1 = await getErrorPromise(memoizedFn('foo'))
+        const err2 = await getErrorPromise(memoizedFn('foo'))
 
-        expect(result1).toBePromise()
         expect(err1).toBeInstanceOf(Error)
-        expect(result2).toBePromise()
         expect(err2).toBeInstanceOf(Error)
         expect(fn).toBeCalledTimes(2)
       })
@@ -73,23 +64,15 @@ describe('memoizeAsyncStaleIfError', () => {
           )
 
           const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
-          const result1 = memoizedFn() // miss
-          const proResult1 = await result1 // 1
-          const result2 = memoizedFn() // hit
-          const proResult2 = await result2 // 1
-          const result3 = memoizedFn() // stale, revalidate, no error
-          const proResult3 = await result3 // 2
-          const result4 = memoizedFn() // hit
-          const proResult4 = await result4 // 2
+          const result1 = await memoizedFn() // miss, 1
+          const result2 = await memoizedFn() // hit, 1
+          const result3 = await memoizedFn() // stale, revalidate, no error, 2
+          const result4 = await memoizedFn() // hit, 2
 
-          expect(result1).toBePromise()
-          expect(proResult1).toStrictEqual(createResult([1, State.Miss]))
-          expect(result2).toBePromise()
-          expect(proResult2).toStrictEqual(createResult([1, State.Hit]))
-          expect(result3).toBePromise()
-          expect(proResult3).toStrictEqual(createResult([2, State.StaleIfError]))
-          expect(result4).toBePromise()
-          expect(proResult4).toStrictEqual(createResult([2, State.Hit]))
+          expect(result1).toStrictEqual(createResult([1, State.Miss]))
+          expect(result2).toStrictEqual(createResult([1, State.Hit]))
+          expect(result3).toStrictEqual(createResult([2, State.StaleIfError]))
+          expect(result4).toStrictEqual(createResult([2, State.Hit]))
           expect(fn).toBeCalledTimes(2)
         })
 
@@ -117,23 +100,15 @@ describe('memoizeAsyncStaleIfError', () => {
             )
 
             const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
-            const result1 = memoizedFn() // miss
-            const proResult1 = await result1 // 1
-            const result2 = memoizedFn() // stale, revalidate, error
-            const proResult2 = await result2 // 1,
-            const result3 = memoizedFn() // stale, revalidate, no error
-            const proResult3 = await result3 // 2
-            const result4 = memoizedFn() // hit
-            const proResult4 = await result4 // 2
+            const result1 = await memoizedFn() // miss, 1
+            const result2 = await memoizedFn() // stale, revalidate, error, 1
+            const result3 = await memoizedFn() // stale, revalidate, no error, 2
+            const result4 = await memoizedFn() // hit, 2
 
-            expect(result1).toBePromise()
-            expect(proResult1).toStrictEqual(createResult([1, State.Miss]))
-            expect(result2).toBePromise()
-            expect(proResult2).toStrictEqual(createResult([1, State.StaleIfError]))
-            expect(result3).toBePromise()
-            expect(proResult3).toStrictEqual(createResult([2, State.StaleIfError]))
-            expect(result4).toBePromise()
-            expect(proResult4).toStrictEqual(createResult([2, State.Hit]))
+            expect(result1).toStrictEqual(createResult([1, State.Miss]))
+            expect(result2).toStrictEqual(createResult([1, State.StaleIfError]))
+            expect(result3).toStrictEqual(createResult([2, State.StaleIfError]))
+            expect(result4).toStrictEqual(createResult([2, State.Hit]))
             expect(fn).toBeCalledTimes(3)
           })
         })
@@ -148,15 +123,13 @@ describe('memoizeAsyncStaleIfError', () => {
           const cache = new Cache(() => State.Hit)
 
           const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
-          const result1 = memoizedFn('foo')
-          const result2 = memoizedFn('foo')
-          const proResult1 = await result1
-          const proResult2 = await result2
+          const promise1 = memoizedFn('foo')
+          const promise2 = memoizedFn('foo')
+          const result1 = await promise1
+          const result2 = await promise2
 
-          expect(result1).toBePromise()
-          expect(proResult1).toStrictEqual(createResult(['foo', State.Miss]))
-          expect(result2).toBePromise()
-          expect(proResult2).toStrictEqual(createResult(['foo', State.Reuse]))
+          expect(result1).toStrictEqual(createResult(['foo', State.Miss]))
+          expect(result2).toStrictEqual(createResult(['foo', State.Reuse]))
           expect(fn).toBeCalledTimes(1)
         })
 
@@ -168,14 +141,12 @@ describe('memoizeAsyncStaleIfError', () => {
           const cache = new Cache(() => State.Hit)
 
           const memoizedFn = memoizeAsyncStaleIfError({ cache }, fn)
-          const result1 = memoizedFn('foo')
-          const result2 = memoizedFn('foo')
-          const err1 = await getErrorPromise(result1)
-          const err2 = await getErrorPromise(result2)
+          const promise1 = memoizedFn('foo')
+          const promise2 = memoizedFn('foo')
+          const err1 = await getErrorPromise(promise1)
+          const err2 = await getErrorPromise(promise2)
 
-          expect(result1).toBePromise()
           expect(err1).toBeInstanceOf(Error)
-          expect(result2).toBePromise()
           expect(err2).toBeInstanceOf(Error)
           expect(fn).toBeCalledTimes(1)
         })

@@ -1,7 +1,6 @@
 import { memoize, IMemoizeOptions } from '@memoizes/memoize'
 import { Cache } from '@test/utils'
 import { getError } from 'return-style'
-import '@blackglory/jest-matchers'
 import { State } from '@src/types'
 
 describe('memoize', () => {
