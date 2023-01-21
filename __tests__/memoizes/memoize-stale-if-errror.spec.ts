@@ -96,7 +96,7 @@ describe('memoizeStaleIfError', () => {
 
     describe('executionTimeThreshold', () => {
       beforeEach(() => {
-        jest.useFakeTimers('modern')
+        jest.useFakeTimers()
       })
 
       afterEach(() => {

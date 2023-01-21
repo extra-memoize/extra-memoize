@@ -86,7 +86,7 @@ describe('memoizeAsync', () => {
 
       describe('executionTimeThreshold', () => {
         beforeEach(() => {
-          jest.useFakeTimers('modern')
+          jest.useFakeTimers()
         })
 
         afterEach(() => {
