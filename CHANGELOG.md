@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.3](https://github.com/extra-memoize/extra-memoize/compare/v0.9.2...v0.9.3) (2023-06-10)
+
+
+### Bug Fixes
+
+* export src ([4b3e7cd](https://github.com/extra-memoize/extra-memoize/commit/4b3e7cdd69c00bbe864a007976e23aab7d2a64dc))
+
 ### [0.9.2](https://github.com/extra-memoize/extra-memoize/compare/v0.9.1...v0.9.2) (2023-01-21)
 
 ### [0.9.1](https://github.com/extra-memoize/extra-memoize/compare/v0.9.0...v0.9.1) (2022-09-12)
