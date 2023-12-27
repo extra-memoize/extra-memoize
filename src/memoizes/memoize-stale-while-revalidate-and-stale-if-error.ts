@@ -89,7 +89,7 @@ export function memoizeStaleWhileRevalidateAndStaleIfError<
 ): (...args: Args) => Promise<Result | VerboseResult<Result>> {
   const pendings = new Map<string, Promise<Result>>()
 
-  return async function(
+  return async function (
     this: unknown
   , ...args: Args
   ): Promise<Result | VerboseResult<Result>> {
