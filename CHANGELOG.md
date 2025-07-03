@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/extra-memoize/extra-memoize/compare/v0.9.3...v0.10.0) (2025-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* - CommonJS => ESM
+- It requires Node.js >= 22
+
+* upgrade dependencies ([675f53f](https://github.com/extra-memoize/extra-memoize/commit/675f53f8397219a36dd3dfd5e1db30fa45764f7b))
+
 ### [0.9.3](https://github.com/extra-memoize/extra-memoize/compare/v0.9.2...v0.9.3) (2023-06-10)
 
 

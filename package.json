@@ -1,6 +1,6 @@
 {
   "name": "extra-memoize",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "Yet another memoize library",
   "keywords": [
     "memoize"
