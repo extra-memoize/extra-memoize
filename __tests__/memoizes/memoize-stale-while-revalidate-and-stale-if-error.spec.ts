@@ -1,9 +1,10 @@
+import { describe, it, expect, test, vi, beforeEach, afterEach } from 'vitest'
 import {
   memoizeStaleWhileRevalidateAndStaleIfError
 , IMemoizeStaleWhileRevalidateAndStaleIfError
-} from '@memoizes/memoize-stale-while-revalidate-and-stale-if-error'
-import { State } from '@src/types'
-import { SWRAndSIECache, SWRAndSIEAsyncCache } from '@test/utils'
+} from '@memoizes/memoize-stale-while-revalidate-and-stale-if-error.js'
+import { State } from '@src/types.js'
+import { SWRAndSIECache, SWRAndSIEAsyncCache } from '@test/utils.js'
 import { getErrorPromise } from 'return-style'
 import { delay } from 'extra-promise'
 import { Awaitable } from '@blackglory/prelude'
@@ -18,7 +19,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
     , ['async cache', SWRAndSIEAsyncCache]
     ])('%s', (_, Cache) => {
       it('caches the result', async () => {
-        const fn = jest.fn(async (text: string) => {
+        const fn = vi.fn(async (text: string) => {
           await delay(100)
           return text
         })
@@ -34,7 +35,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
       })
 
       test('fn throws errors', async () => {
-        const fn = jest.fn(async (text: string) => {
+        const fn = vi.fn(async (text: string) => {
           await delay(100)
           throw new Error('error')
         })
@@ -55,12 +56,12 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
         describe('caches the result', () => {
           it('returns stale cache then revalidate in background', async () => {
             let count = 0
-            const fn = jest.fn(async () => {
+            const fn = vi.fn(async () => {
               await delay(100)
               return ++count
             })
             const cache = new Cache(
-              jest.fn()
+              vi.fn()
                 .mockReturnValueOnce(State.StaleWhileRevalidate)
                 .mockReturnValueOnce(State.StaleWhileRevalidate)
                 .mockReturnValue(State.Hit)
@@ -93,7 +94,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
         describe('fn throws errors', () => {
           it('returns stale cache', async () => {
             let count = 0
-            const fn = jest.fn()
+            const fn = vi.fn()
               .mockImplementationOnce(async () => {
                 await delay(100)
                 return ++count
@@ -107,7 +108,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
                 return ++count
               })
             const cache = new Cache(
-              jest.fn()
+              vi.fn()
                 .mockReturnValueOnce(State.StaleWhileRevalidate)
                 .mockReturnValueOnce(State.StaleWhileRevalidate)
                 .mockReturnValueOnce(State.StaleWhileRevalidate)
@@ -144,12 +145,12 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
       describe('stale-if-error', () => {
         test('caches the result', async () => {
           let count = 0
-          const fn = jest.fn(async () => {
+          const fn = vi.fn(async () => {
             await delay(100)
             return ++count
           })
           const cache = new Cache(
-            jest.fn()
+            vi.fn()
               .mockReturnValueOnce(State.Hit)
               .mockReturnValueOnce(State.StaleIfError)
               .mockReturnValue(State.Hit)
@@ -171,7 +172,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
         describe('fn throws errors', () => {
           it('returns stale cache', async () => {
             let count = 0
-            const fn = jest.fn()
+            const fn = vi.fn()
               .mockImplementationOnce(async () => {
                 await delay(100)
                 return ++count
@@ -185,7 +186,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
                 return ++count
               })
             const cache = new Cache(
-              jest.fn()
+              vi.fn()
                 .mockReturnValueOnce(State.StaleIfError)
                 .mockReturnValueOnce(State.StaleIfError)
                 .mockReturnValue(State.Hit)
@@ -210,7 +211,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
 
       describe('concurrent calls', () => {
         test('resolved', async () => {
-          const fn = jest.fn(async (text: string) => {
+          const fn = vi.fn(async (text: string) => {
             await delay(100)
             return text
           })
@@ -226,7 +227,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
         })
 
         test('rejected', async () => {
-          const fn = jest.fn(async (text: string) => {
+          const fn = vi.fn(async (text: string) => {
             await delay(100)
             throw new Error('error')
           })
@@ -246,18 +247,18 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
 
       describe('executionTimeThreshold', () => {
         beforeEach(() => {
-          jest.useFakeTimers()
+          vi.useFakeTimers()
         })
 
         afterEach(() => {
-          jest.runOnlyPendingTimers()
-          jest.useRealTimers()
+          vi.runOnlyPendingTimers()
+          vi.useRealTimers()
         })
 
         describe('executionTime >= executionTimeThreshold', () => {
           it('caches the result', async () => {
-            const fn = jest.fn((text: string) => {
-              jest.setSystemTime(jest.getRealSystemTime() + 200)
+            const fn = vi.fn((text: string) => {
+              vi.setSystemTime(vi.getRealSystemTime() + 200)
               return text
             })
             const cache = new Cache(() => State.Hit)
@@ -277,7 +278,7 @@ describe('memoizeStaleWhileRevalidateAndStaleIfError', () => {
 
         describe('executionTime < executionTimeThreshold', () => {
           it('does not cache the result', async () => {
-            const fn = jest.fn((text: string) => text)
+            const fn = vi.fn((text: string) => text)
             const cache = new Cache(() => State.Hit)
 
             const memoizedFn = memoizeStaleWhileRevalidateAndStaleIfError({

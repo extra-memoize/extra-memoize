@@ -8,7 +8,7 @@ import {
 , IStaleWhileRevalidateAndStaleIfErrorAsyncCache
 , IStaleWhileRevalidateAndStaleIfErrorCache
 , State
-} from '@src/types'
+} from '@src/types.js'
 
 export class Cache<T> implements ICache<T> {
   private map = new Map()

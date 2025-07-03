@@ -1,6 +1,6 @@
-import { ICache, State } from '@src/types'
-import { defaultCreateKey } from '@memoizes/utils/default-create-key'
-import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
+import { ICache, State } from '@src/types.js'
+import { defaultCreateKey } from '@memoizes/utils/default-create-key.js'
+import { createVerboseResult } from '@memoizes/utils/create-verbose-result.js'
 
 type VerboseResult<T> = [T, State.Hit | State.Miss]
 

@@ -1,8 +1,9 @@
-import { memoizeAsync, IMemoizeAsyncOptions } from '@memoizes/memoize-async'
+import { describe, it, expect, test, vi, beforeEach, afterEach } from 'vitest'
+import { memoizeAsync, IMemoizeAsyncOptions } from '@memoizes/memoize-async.js'
 import { getErrorPromise } from 'return-style'
 import { delay } from 'extra-promise'
-import { Cache, AsyncCache } from '@test/utils'
-import { State } from '@src/types'
+import { Cache, AsyncCache } from '@test/utils.js'
+import { State } from '@src/types.js'
 import { Awaitable } from '@blackglory/prelude'
 
 describe('memoizeAsync', () => {
@@ -15,7 +16,7 @@ describe('memoizeAsync', () => {
     , ['async cache', AsyncCache]
     ])('%s', (_, Cache) => {
       it('caches the result', async () => {
-        const fn = jest.fn(async (text: string) => {
+        const fn = vi.fn(async (text: string) => {
           await delay(100)
           return text
         })
@@ -31,7 +32,7 @@ describe('memoizeAsync', () => {
       })
 
       test('fn throws errors', async () => {
-        const fn = jest.fn(async (text: string) => {
+        const fn = vi.fn(async (text: string) => {
           await delay(100)
           throw new Error('error')
         })
@@ -48,7 +49,7 @@ describe('memoizeAsync', () => {
 
       describe('concurrent calls', () => {
         test('resolved', async () => {
-          const fn = jest.fn(async (text: string) => {
+          const fn = vi.fn(async (text: string) => {
             await delay(100)
             return text
           })
@@ -66,7 +67,7 @@ describe('memoizeAsync', () => {
         })
 
         test('rejected', async () => {
-          const fn = jest.fn(async (text: string) => {
+          const fn = vi.fn(async (text: string) => {
             await delay(100)
             throw new Error('error')
           })
@@ -86,18 +87,18 @@ describe('memoizeAsync', () => {
 
       describe('executionTimeThreshold', () => {
         beforeEach(() => {
-          jest.useFakeTimers()
+          vi.useFakeTimers()
         })
 
         afterEach(() => {
-          jest.runOnlyPendingTimers()
-          jest.useRealTimers()
+          vi.runOnlyPendingTimers()
+          vi.useRealTimers()
         })
 
         describe('executionTime >= executionTimeThreshold', () => {
           it('caches the result', async () => {
-            const fn = jest.fn(async (text: string) => {
-              jest.setSystemTime(jest.getRealSystemTime() + 200)
+            const fn = vi.fn(async (text: string) => {
+              vi.setSystemTime(vi.getRealSystemTime() + 200)
               return text
             })
             const cache = new Cache()
@@ -117,7 +118,7 @@ describe('memoizeAsync', () => {
 
         describe('executionTime < executionTimeThreshold', () => {
           it('does not cache the result', async () => {
-            const fn = jest.fn(async (text: string) => text)
+            const fn = vi.fn(async (text: string) => text)
             const cache = new Cache()
 
             const memoizedFn = memoizeAsync({

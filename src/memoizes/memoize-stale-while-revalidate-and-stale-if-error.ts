@@ -2,10 +2,10 @@ import {
   IStaleWhileRevalidateAndStaleIfErrorCache
 , IStaleWhileRevalidateAndStaleIfErrorAsyncCache
 , State
-} from '@src/types'
+} from '@src/types.js'
 import { pass, Awaitable } from '@blackglory/prelude'
-import { defaultCreateKey } from '@memoizes/utils/default-create-key'
-import { createVerboseResult } from '@memoizes/utils/create-verbose-result'
+import { defaultCreateKey } from '@memoizes/utils/default-create-key.js'
+import { createVerboseResult } from '@memoizes/utils/create-verbose-result.js'
 
 type VerboseResult<T> = [
   T

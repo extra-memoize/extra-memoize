@@ -1,2 +1,2 @@
-export * from '@memoizes'
-export * from './types'
+export * from '@memoizes/index.js'
+export * from './types.js'

@@ -1,9 +1,10 @@
+import { describe, it, expect, test, vi, beforeEach, afterEach } from 'vitest'
 import {
   memoizeStaleIfError
 , IMemoizeStaleIfErrorOptions
-} from '@memoizes/memoize-stale-if-error'
-import { SIECache } from '@test/utils'
-import { State } from '@src/types'
+} from '@memoizes/memoize-stale-if-error.js'
+import { SIECache } from '@test/utils.js'
+import { State } from '@src/types.js'
 import { getError } from 'return-style'
 
 describe('memoizeStaleIfError', () => {
@@ -12,7 +13,7 @@ describe('memoizeStaleIfError', () => {
   , ['not verbose', memoizeStaleIfError, toValue]
   ])('%s', (_, memoizeStaleIfError, createResult) => {
     it('caches the result', () => {
-      const fn = jest.fn((text: string) => text)
+      const fn = vi.fn((text: string) => text)
       const cache = new SIECache(() => State.Hit)
 
       const memoizedFn = memoizeStaleIfError({ cache }, fn)
@@ -25,7 +26,7 @@ describe('memoizeStaleIfError', () => {
     })
 
     test('fn throws errors', () => {
-      const fn = jest.fn((text: string) => {
+      const fn = vi.fn((text: string) => {
         throw new Error('error')
       })
       const cache = new SIECache(() => State.Hit)
@@ -42,9 +43,9 @@ describe('memoizeStaleIfError', () => {
     describe('stale-if-error', () => {
       test('caches the result', () => {
         let count = 0
-        const fn = jest.fn(() => ++count)
+        const fn = vi.fn(() => ++count)
         const cache = new SIECache(
-          jest.fn()
+          vi.fn()
             .mockReturnValueOnce(State.Hit)
             .mockReturnValueOnce(State.StaleIfError)
             .mockReturnValue(State.Hit)
@@ -66,14 +67,14 @@ describe('memoizeStaleIfError', () => {
       describe('fn throws errors', () => {
         it('returns stale cache', () => {
           let count = 0
-          const fn = jest.fn()
+          const fn = vi.fn()
             .mockImplementationOnce(() => ++count)
             .mockImplementationOnce(() => {
               throw new Error('error')
             })
             .mockImplementation(() => ++count)
           const cache = new SIECache(
-            jest.fn()
+            vi.fn()
               .mockReturnValueOnce(State.StaleIfError)
               .mockReturnValueOnce(State.StaleIfError)
               .mockReturnValue(State.Hit)
@@ -96,18 +97,18 @@ describe('memoizeStaleIfError', () => {
 
     describe('executionTimeThreshold', () => {
       beforeEach(() => {
-        jest.useFakeTimers()
+        vi.useFakeTimers()
       })
 
       afterEach(() => {
-        jest.runOnlyPendingTimers()
-        jest.useRealTimers()
+        vi.runOnlyPendingTimers()
+        vi.useRealTimers()
       })
 
       describe('executionTime >= executionTimeThreshold', () => {
         it('caches the result', () => {
-          const fn = jest.fn((text: string) => {
-            jest.setSystemTime(jest.getRealSystemTime() + 200)
+          const fn = vi.fn((text: string) => {
+            vi.setSystemTime(vi.getRealSystemTime() + 200)
             return text
           })
           const cache = new SIECache(() => State.Hit)
@@ -127,7 +128,7 @@ describe('memoizeStaleIfError', () => {
 
       describe('executionTime < executionTimeThreshold', () => {
         it('does not cache the result', () => {
-          const fn = jest.fn((text: string) => text)
+          const fn = vi.fn((text: string) => text)
           const cache = new SIECache(() => State.Hit)
 
           const memoizedFn = memoizeStaleIfError({

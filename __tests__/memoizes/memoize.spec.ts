@@ -1,7 +1,8 @@
-import { memoize, IMemoizeOptions } from '@memoizes/memoize'
-import { Cache } from '@test/utils'
+import { describe, it, expect, test, vi, beforeEach, afterEach } from 'vitest'
+import { memoize, IMemoizeOptions } from '@memoizes/memoize.js'
+import { Cache } from '@test/utils.js'
 import { getError } from 'return-style'
-import { State } from '@src/types'
+import { State } from '@src/types.js'
 
 describe('memoize', () => {
   describe.each([
@@ -9,7 +10,7 @@ describe('memoize', () => {
   , ['not verbose', memoize, toValue]
   ])('%s', (_, memoize, createResult) => {
     it('caches the result', () => {
-      const fn = jest.fn((text: string) => text)
+      const fn = vi.fn((text: string) => text)
       const cache = new Cache()
 
       const memoizedFn = memoize({ cache }, fn)
@@ -22,7 +23,7 @@ describe('memoize', () => {
     })
 
     test('fn throws errors', () => {
-      const fn = jest.fn((text: string) => {
+      const fn = vi.fn((text: string) => {
         throw new Error('error')
       })
       const cache = new Cache()
@@ -38,18 +39,18 @@ describe('memoize', () => {
 
     describe('executionTimeThreshold', () => {
       beforeEach(() => {
-        jest.useFakeTimers()
+        vi.useFakeTimers()
       })
 
       afterEach(() => {
-        jest.runOnlyPendingTimers()
-        jest.useRealTimers()
+        vi.runOnlyPendingTimers()
+        vi.useRealTimers()
       })
 
       describe('executionTime >= executionTimeThreshold', () => {
         it('caches the result', () => {
-          const fn = jest.fn((text: string) => {
-            jest.setSystemTime(jest.getRealSystemTime() + 200)
+          const fn = vi.fn((text: string) => {
+            vi.setSystemTime(vi.getRealSystemTime() + 200)
             return text
           })
           const cache = new Cache()
@@ -69,7 +70,7 @@ describe('memoize', () => {
 
       describe('executionTime < executionTimeThreshold', () => {
         it('does not cache the result', () => {
-          const fn = jest.fn((text: string) => text)
+          const fn = vi.fn((text: string) => text)
           const cache = new Cache()
 
           const memoizedFn = memoize({
