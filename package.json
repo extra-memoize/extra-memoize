@@ -23,7 +23,7 @@
     "prepare": "ts-patch install -s",
     "lint": "eslint --quiet src __tests__",
     "test": "vitest run",
-    "prepublishOnly": "run-s clean build",
+    "prepublishOnly": "run-s prepare clean build",
     "clean": "rimraf lib",
     "build": "tsc --project tsconfig.build.json --outDir lib",
     "release": "standard-version"
