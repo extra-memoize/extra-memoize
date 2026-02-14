@@ -29,7 +29,7 @@ enum State {
 , Hit = 'hit'
 , Reuse = 'reuse'
 , StaleWhileRevalidate = 'stale-while-revalidate'
-, StaleIfError = 'state-if-error'
+, StaleIfError = 'stale-if-error'
 }
 
 interface ICache<T> {
