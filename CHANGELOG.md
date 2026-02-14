@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.1](https://github.com/extra-memoize/extra-memoize/compare/v0.10.0...v0.10.1) (2026-02-14)
+
+
+### Bug Fixes
+
+* **state:** typo ([c725346](https://github.com/extra-memoize/extra-memoize/commit/c72534604eaef3c521171940495611595f2ba867))
+
 ## [0.10.0](https://github.com/extra-memoize/extra-memoize/compare/v0.9.3...v0.10.0) (2025-07-03)
 
 
